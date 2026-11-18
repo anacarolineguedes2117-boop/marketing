@@ -1,0 +1,116 @@
+---
+/**
+ * Barras horizontais de magnitude. Matiz única em rampa ordinal, pontas
+ * arredondadas de 4px ancoradas na linha de base, rótulo direto em cada barra.
+ */
+import { passoN, num } from '~/lib/grafico';
+
+interface Item { nome: string; valor: number; nota?: string; sufixo?: string; cor?: string }
+interface Props {
+  itens: Item[];
+  titulo: string;
+  nota?: string;
+  sufixo?: string;
+  /** Marca uma referência vertical (ex.: mínimo exigido). */
+  referencia?: { em: number; rotulo: string };
+  class?: string;
+}
+const { itens, titulo, nota, sufixo = '', referencia, class: klass = '' } = Astro.props;
+
+const max = Math.max(...itens.map((i) => i.valor), referencia?.em ?? 0) * 1.12;
+const id = `barras-${Math.random().toString(36).slice(2, 7)}`;
+---
+<figure class:list={['barras', klass]} data-grafico>
+  <figcaption class="g-titulo" id={`${id}-t`}>{titulo}</figcaption>
+
+  <ul class="bar-lista" aria-labelledby={`${id}-t`}>
+    {referencia && (
+      <li class="bar-ref" style={`--x:${(referencia.em / max) * 100}%`} aria-hidden="true">
+        <span>{referencia.rotulo}</span>
+      </li>
+    )}
+    {itens.map((it, i) => (
+      <li class="bar-item">
+        <span class="bar-nome">{it.nome}</span>
+        <span class="bar-trilho">
+          <span
+            class="bar-marca"
+            style={`width:${(it.valor / max) * 100}%; background:${it.cor ?? passoN(i, itens.length)}`}
+            tabindex="0"
+            data-ponto data-rotulo={it.nome}
+            data-valor={`${num(it.valor, it.valor % 1 ? 2 : 0)}${it.sufixo ?? sufixo}`}
+            data-nota={it.nota}
+          ></span>
+        </span>
+        <span class="bar-valor">{num(it.valor, it.valor % 1 ? 2 : 0)}{it.sufixo ?? sufixo}</span>
+      </li>
+    ))}
+  </ul>
+
+  {nota && <p class="g-nota">{nota}</p>}
+
+  <details class="g-tabela">
+    <summary>Ver os dados em tabela</summary>
+    <table>
+      <thead><tr><th>Item</th><th>Valor</th>{itens.some((i) => i.nota) && <th>Observação</th>}</tr></thead>
+      <tbody>
+        {itens.map((it) => (
+          <tr>
+            <td>{it.nome}</td>
+            <td>{num(it.valor, it.valor % 1 ? 2 : 0)}{it.sufixo ?? sufixo}</td>
+            {itens.some((i) => i.nota) && <td>{it.nota ?? '—'}</td>}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </details>
+</figure>
+
+<style>
+  .barras { margin: 0; display: grid; gap: 1.1rem; }
+  .bar-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; position: relative; padding-top: 1.4rem; }
+
+  .bar-item {
+    display: grid; grid-template-columns: minmax(5.5rem, 10rem) minmax(0, 1fr) auto;
+    gap: .9rem; align-items: center; font-size: var(--t-peq);
+  }
+  .bar-nome { text-align: right; color: var(--tinta-2); }
+  .bar-trilho {
+    display: block; height: .95rem; position: relative;
+    background: color-mix(in oklab, var(--tinta) 7%, transparent);
+  }
+  .bar-marca {
+    display: block; height: 100%; min-width: 3px;
+    border-radius: 0 4px 4px 0;      /* ponta arredondada, base ancorada */
+    /* fio de contorno: quando a barra É a cor medida, as claras somem sem ele */
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tinta) 22%, transparent);
+    transition: filter .25s var(--ease);
+    outline-offset: 2px;
+  }
+  .bar-marca:hover, .bar-marca:focus-visible { filter: brightness(1.08); }
+  .bar-valor {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: var(--t-label); color: var(--tinta);
+  }
+
+  .bar-ref {
+    position: absolute; inset-block: 0; left: calc(10rem + .9rem);
+    width: calc(100% - 10rem - .9rem); pointer-events: none;
+  }
+  .bar-ref::before {
+    content: ''; position: absolute; top: 1.2rem; bottom: 0; left: var(--x);
+    border-left: 1px dashed color-mix(in oklab, var(--tinta) 45%, transparent);
+  }
+  .bar-ref span {
+    position: absolute; top: 0; left: var(--x); translate: -50% 0;
+    font-family: var(--mono); font-size: var(--t-label); color: var(--tinta-3);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 34rem) {
+    .bar-item { grid-template-columns: 1fr auto; gap: .3rem .7rem; }
+    .bar-nome { text-align: left; grid-column: 1; }
+    .bar-trilho { grid-column: 1 / -1; grid-row: 2; }
+    .bar-ref { display: none; }
+  }
+</style>

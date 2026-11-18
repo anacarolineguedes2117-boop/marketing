@@ -32,8 +32,10 @@ const r = 41;
     <defs>
       <path id={id} d={`M50,${50 - r} a${r},${r} 0 1,1 -0.01,0`} />
     </defs>
+    {/* uma volta só: duplicar o texto faz a sobra reescrever o começo,
+        porque o excedente de um textPath é cortado, não enrolado */}
     <text fill={cor}>
-      <textPath href={`#${id}`} startOffset="0%">{texto}{texto}</textPath>
+      <textPath href={`#${id}`} startOffset="0%">{texto}</textPath>
     </text>
   </svg>
   <Simbolo class="selo-simbolo" tamanho="38%" cor={cor} acento={acento} />

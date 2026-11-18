@@ -30,3 +30,8 @@ export const rotulosPeca: Record<TipoPeca, string> = {
   destaques: 'Capas de destaque',
   assinaturaEmail: 'Assinatura de e-mail',
 };
+
+/** Modelos editaveis de rede social (Template.astro). */
+export type TipoTemplate =
+  | 'citacao' | 'anuncio' | 'dica' | 'capaCarrossel' | 'retrato' | 'numero'
+  | 'storyCapa' | 'storyCitacao' | 'storyEnquete' | 'storyBastidor';

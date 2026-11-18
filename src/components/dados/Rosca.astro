@@ -1,0 +1,107 @@
+---
+/**
+ * Rosca de proporção. Matiz única em rampa ordinal — a ordem das fatias é o
+ * próprio dado, então a cor mostra a ordem. Cada fatia tem rótulo direto.
+ */
+import { arco, num } from '~/lib/grafico';
+
+interface Fatia { nome: string; pct: number; hex: string; papel?: string }
+interface Props { fatias: Fatia[]; titulo: string; nota?: string; class?: string }
+const { fatias, titulo, nota, class: klass = '' } = Astro.props;
+
+const total = fatias.reduce((t, f) => t + f.pct, 0);
+let ang = 0;
+const GAP = 1.6;            // folga de 2px de superfície entre fatias
+const seg = fatias.map((f) => {
+  const ext = (f.pct / total) * 360;
+  const d = arco(100, 100, 92, 54, ang + GAP / 2, ang + ext - GAP / 2);
+  ang += ext;
+  return { ...f, d };
+});
+const id = `rosca-${Math.random().toString(36).slice(2, 7)}`;
+---
+<figure class:list={['rosca', klass]} data-grafico>
+  <figcaption class="g-titulo" id={`${id}-t`}>{titulo}</figcaption>
+
+  <div class="rosca-corpo">
+    <svg viewBox="0 0 200 200" role="img" aria-labelledby={`${id}-t`}>
+      {/* duas passadas: a cor com folga de superfície, e um fio por cima —
+          sem ele a fatia creme desaparece sobre o cartão creme */}
+      {seg.map((f) => (
+        <path d={f.d} fill={f.hex} stroke="var(--bg)" stroke-width="3" />
+      ))}
+      {seg.map((f) => (
+        <path
+          class="fatia-fio" d={f.d} fill="none"
+          tabindex="0" role="img" aria-label={`${f.nome}: ${num(f.pct)}% da aplicação`}
+          data-ponto data-rotulo={f.nome} data-valor={`${num(f.pct)}% da aplicação`}
+          data-nota={f.papel}
+        ><title>{f.nome}: {f.pct}%</title></path>
+      ))}
+      <text x="100" y="94" class="rosca-centro-n">{fatias.length}</text>
+      <text x="100" y="114" class="rosca-centro-r">cores</text>
+    </svg>
+
+    <ul class="rosca-legenda">
+      {fatias.map((f) => (
+        <li>
+          <span class="rosca-ficha" style={`background:${f.hex}`}></span>
+          <span class="rosca-nome">{f.nome}</span>
+          <span class="rosca-papel">{f.papel}</span>
+          <span class="rosca-pct">{num(f.pct)}%</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  {nota && <p class="g-nota">{nota}</p>}
+
+  <details class="g-tabela">
+    <summary>Ver os dados em tabela</summary>
+    <table>
+      <thead><tr><th>Cor</th><th>Papel</th><th>Proporção</th></tr></thead>
+      <tbody>
+        {fatias.map((f) => (
+          <tr><td>{f.nome}</td><td>{f.papel}</td><td>{num(f.pct)}%</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </details>
+</figure>
+
+<style>
+  .rosca { margin: 0; display: grid; gap: 1.1rem; }
+  .rosca-corpo {
+    display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    gap: clamp(1.2rem, 3vw, 2.4rem); align-items: center;
+  }
+  .rosca svg { width: 100%; height: auto; overflow: visible; }
+  .rosca path { transition: opacity .25s var(--ease); cursor: default; }
+  .fatia-fio { stroke: color-mix(in oklab, var(--tinta) 26%, transparent); stroke-width: 1; }
+  .rosca:hover path { opacity: .45; }
+  .rosca path:hover, .rosca path:focus-visible { opacity: 1; }
+  .fatia-fio:focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; }
+  .rosca-centro-n {
+    text-anchor: middle; font-family: var(--serif); font-size: 34px;
+    font-variation-settings: 'opsz' 144; fill: var(--tinta); font-weight: 400;
+  }
+  .rosca-centro-r {
+    text-anchor: middle; font-family: var(--mono); font-size: 9px;
+    letter-spacing: .18em; text-transform: uppercase; fill: var(--tinta-3);
+  }
+
+  .rosca-legenda { list-style: none; margin: 0; padding: 0; display: grid; }
+  .rosca-legenda li {
+    display: grid; grid-template-columns: .85rem 1fr auto auto;
+    gap: .7rem; align-items: baseline;
+    padding-block: .5rem; border-top: 1px solid var(--linha);
+    font-size: var(--t-peq);
+  }
+  .rosca-ficha {
+    width: .85rem; height: .85rem; display: block; align-self: center;
+    box-shadow: inset 0 0 0 1px rgb(36 36 36 / .18);
+  }
+  .rosca-papel { color: var(--tinta-3); font-family: var(--mono); font-size: var(--t-label); }
+  .rosca-pct { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  @media (max-width: 34rem) { .rosca-corpo { grid-template-columns: 1fr; } }
+</style>

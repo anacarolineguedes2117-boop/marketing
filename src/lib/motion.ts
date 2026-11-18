@@ -115,6 +115,13 @@ export function iniciarMagnetico() {
   }
 }
 
+/** Tooltips dos graficos — so carrega se a pagina tiver algum. */
+export async function iniciarGraficos() {
+  if (!document.querySelector('[data-grafico]')) return;
+  const { iniciarTooltips } = await import('./grafico-hover');
+  iniciarTooltips();
+}
+
 /** Rolagem com inercia (Lenis). Opcional: so entra em ponteiro fino. */
 export async function iniciarRolagem() {
   if (REDUZIDO() || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -136,6 +143,7 @@ export async function iniciarRolagem() {
 
 export function iniciarTudo() {
   iniciarRevelacoes();
+  iniciarGraficos();
   iniciarIndice();
   iniciarParallax();
   iniciarMagnetico();

@@ -147,3 +147,55 @@ em, .enfase {
 }
 [data-tema='escuro'] .papel::before,
 [data-tema='vinho'] .papel::before { mix-blend-mode: screen; opacity: .22; }
+
+/* --- gráficos ------------------------------------------------------------ */
+.g-titulo {
+  font-family: var(--mono); font-size: var(--t-label);
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  color: var(--tinta); order: -1;
+}
+.g-nota {
+  font-size: var(--t-label); line-height: 1.65; color: var(--tinta-3);
+  margin: 0; max-width: 62ch; text-wrap: pretty;
+}
+.g-tabela > summary {
+  font-family: var(--mono); font-size: var(--t-label);
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  color: var(--tinta-3); cursor: pointer; padding-block: .3rem;
+  list-style-position: inside;
+}
+.g-tabela > summary:hover { color: var(--tinta); }
+.g-tabela table {
+  width: 100%; border-collapse: collapse; margin-top: .8rem;
+  font-size: var(--t-label);
+}
+.g-tabela th, .g-tabela td {
+  text-align: left; padding: .45rem .7rem .45rem 0;
+  border-bottom: 1px solid var(--linha);
+}
+.g-tabela th {
+  font-family: var(--mono); text-transform: uppercase;
+  letter-spacing: .1em; color: var(--tinta-3); font-weight: 400;
+}
+.g-tabela td { color: var(--tinta-2); font-variant-numeric: tabular-nums; }
+
+.g-dica {
+  position: fixed; top: 0; left: 0; z-index: 90;
+  pointer-events: none;
+  background: var(--preto); color: var(--creme);
+  padding: .55rem .75rem; max-width: 18rem;
+  display: grid; gap: .2rem;
+  box-shadow: 0 8px 24px -10px rgb(36 36 36 / .5);
+}
+.g-dica[hidden] { display: none; }
+.g-dica strong {
+  font-size: .8rem; font-weight: 600;
+}
+.g-dica span {
+  font-family: var(--mono); font-size: .72rem; color: var(--rosa);
+  font-variant-numeric: tabular-nums;
+}
+.g-dica em {
+  font-style: normal; font-size: .7rem; line-height: 1.45;
+  color: color-mix(in oklab, var(--creme) 62%, var(--preto));
+}

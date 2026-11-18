@@ -1,0 +1,306 @@
+---
+/**
+ * CAROLIZE — templates editáveis de rede social.
+ *
+ * São os modelos que o cliente recebe para publicar sozinho: posts de feed,
+ * stories e capas de carrossel. Todos leem as mesmas variáveis de cor das
+ * demais peças, então trocar a paleta redesenha o conjunto inteiro.
+ *
+ * Como em Peca.astro, as medidas internas usam cqw (largura do template):
+ * porcentagem colapsa quando a altura vem de aspect-ratio.
+ */
+import Simbolo from '~/components/marca/Simbolo.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import type { NomeAdesivo } from '~/lib/stickers';
+
+import type { TipoTemplate } from './tipos';
+
+interface Props {
+  tipo: TipoTemplate;
+  titulo?: string;
+  texto?: string;
+  etiqueta?: string;
+  numero?: string;
+  itens?: string[];
+  adesivo?: NomeAdesivo;
+  rotulo?: string;
+  class?: string;
+  style?: string;
+}
+const {
+  tipo, titulo = 'Marcas têm histórias', texto = '', etiqueta = 'Carolize',
+  numero = '01', itens = [], adesivo = 'estrela', rotulo, class: klass = '', style = '',
+  ...resto
+} = Astro.props;
+---
+<figure class:list={['tpl', `tpl--${tipo}`, klass]} style={style} {...resto}>
+  <div class="tpl-face">
+
+    {tipo === 'citacao' && (
+      <div class="t t-citacao">
+        <span class="t-aspas" aria-hidden="true">“</span>
+        <p class="t-frase">{titulo}</p>
+        <span class="t-assin">{etiqueta}</span>
+      </div>
+    )}
+
+    {tipo === 'anuncio' && (
+      <div class="t t-anuncio">
+        <span class="t-tag">{etiqueta}</span>
+        <div class="t-meio"><p class="t-frase">{titulo}</p></div>
+        <span class="t-botao">{texto || 'Saiba mais'}</span>
+        <span class="t-bolha" aria-hidden="true"></span>
+      </div>
+    )}
+
+    {tipo === 'dica' && (
+      <div class="t t-dica">
+        <span class="t-tag">{etiqueta}</span>
+        <p class="t-titulo">{titulo}</p>
+        <ol class="t-itens">
+          {(itens.length ? itens : ['Primeiro ponto', 'Segundo ponto', 'Terceiro ponto']).map((i) => (
+            <li>{i}</li>
+          ))}
+        </ol>
+        <Simbolo class="t-marca" tamanho="9cqw" fragmento={false} cor="currentColor" />
+      </div>
+    )}
+
+    {tipo === 'capaCarrossel' && (
+      <div class="t t-capa">
+        <span class="t-num">{numero}</span>
+        <p class="t-titulo">{titulo}</p>
+        <span class="t-arraste">arraste →</span>
+      </div>
+    )}
+
+    {tipo === 'numero' && (
+      <div class="t t-numero">
+        <span class="t-numerao">{numero}</span>
+        <p class="t-legenda">{titulo}</p>
+      </div>
+    )}
+
+    {tipo === 'retrato' && (
+      <div class="t t-retrato">
+        <span class="t-area" aria-hidden="true">
+          <Adesivo nome="moldura" tamanho="62%" cor="currentColor" />
+          <span class="t-area-r">foto</span>
+        </span>
+        <span class="t-assin">{etiqueta}</span>
+      </div>
+    )}
+
+    {tipo === 'storyCapa' && (
+      <div class="t t-sCapa">
+        <span class="t-barras" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="t-tag">{etiqueta}</span>
+        <div class="t-meio"><p class="t-frase">{titulo}</p></div>
+        <Simbolo class="t-marca" tamanho="13cqw" cor="currentColor" acento="var(--p-acento)" />
+      </div>
+    )}
+
+    {tipo === 'storyCitacao' && (
+      <div class="t t-sCit">
+        <span class="t-barras" aria-hidden="true"><i></i><i></i><i></i></span>
+        <Adesivo nome={adesivo} tamanho="14cqw" cor="var(--p-acento)" class="t-ad" />
+        <div class="t-meio"><p class="t-frase">{titulo}</p></div>
+        <span class="t-assin">{etiqueta}</span>
+      </div>
+    )}
+
+    {tipo === 'storyEnquete' && (
+      <div class="t t-sEnq">
+        <span class="t-barras" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div class="t-meio">
+          <p class="t-pergunta">{titulo}</p>
+          <span class="t-opcao t-opcao--a">{itens[0] ?? 'Sim'}</span>
+          <span class="t-opcao t-opcao--b">{itens[1] ?? 'Com certeza'}</span>
+        </div>
+        <span class="t-assin">{etiqueta}</span>
+      </div>
+    )}
+
+    {tipo === 'storyBastidor' && (
+      <div class="t t-sBast">
+        <span class="t-barras" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="t-foto" aria-hidden="true"><span>foto</span></span>
+        <p class="t-legenda">{titulo}</p>
+        <span class="t-assin">{etiqueta}</span>
+      </div>
+    )}
+
+  </div>
+  {rotulo && <figcaption class="tpl-rotulo label">{rotulo}</figcaption>}
+</figure>
+
+<style>
+  .tpl { margin: 0; display: grid; gap: .7rem; }
+  .tpl-face {
+    /* conjunto completo de cores da peça: definir aqui garante que nenhum
+       modelo renderize sem fundo, e permite trocar a paleta inteira de fora */
+    --p-bg: var(--creme);
+    --p-tinta: var(--preto);
+    --p-acento: var(--rosa);
+    --p-escuro: var(--vinho);
+    --p-claro: var(--creme);
+    --p-suave: var(--rosa-claro);
+
+    position: relative; overflow: clip;
+    container-type: inline-size;
+    background: var(--p-bg);
+    color: var(--p-tinta);
+    box-shadow: var(--sombra-papel);
+    transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+  }
+  .tpl:hover .tpl-face {
+    transform: translateY(-4px);
+    box-shadow: 0 2px 4px rgb(36 36 36 / .06), 0 22px 42px -18px rgb(36 36 36 / .32);
+  }
+  .tpl-rotulo { color: var(--tinta-3); }
+  .t { position: absolute; inset: 0; width: 100%; height: 100%; display: flex; }
+
+  /* proporções */
+  .tpl--citacao .tpl-face, .tpl--anuncio .tpl-face, .tpl--dica .tpl-face,
+  .tpl--capaCarrossel .tpl-face, .tpl--retrato .tpl-face, .tpl--numero .tpl-face { aspect-ratio: 1; }
+  .tpl--storyCapa .tpl-face, .tpl--storyCitacao .tpl-face,
+  .tpl--storyEnquete .tpl-face, .tpl--storyBastidor .tpl-face { aspect-ratio: 9 / 16; }
+
+  /* peças compartilhadas */
+  .t-tag {
+    font-family: var(--mono); font-size: 3.4cqw; text-transform: uppercase;
+    letter-spacing: .2em; opacity: .72;
+  }
+  .t-assin {
+    font-family: var(--mono); font-size: 3cqw; text-transform: uppercase;
+    letter-spacing: .2em; opacity: .55;
+  }
+  .t-frase, .t-titulo {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15;
+    font-weight: 400; line-height: 1.08; letter-spacing: -.02em; margin: 0;
+    text-wrap: balance;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5;
+    line-clamp: 5; overflow: hidden;
+  }
+  .t-marca { opacity: .9; }
+  .t-barras { display: flex; gap: 2cqw; }
+  .t-barras i { flex: 1; height: 1cqw; background: currentColor; opacity: .25; border-radius: 2px; }
+  .t-barras i:first-child { opacity: .8; }
+  .t-meio { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4cqw; }
+
+  /* citação */
+  .t-citacao {
+    flex-direction: column; justify-content: center; gap: 2cqw; padding: 10cqw;
+    background: var(--p-bg); position: relative;
+  }
+  .t-aspas {
+    font-family: var(--serif); font-size: 30cqw; line-height: .62;
+    color: var(--p-acento); opacity: .9;
+  }
+  .t-citacao .t-frase { font-size: 9cqw; }
+  .t-citacao .t-assin { margin-top: 3cqw; }
+
+  /* anúncio */
+  .t-anuncio {
+    flex-direction: column; justify-content: space-between; gap: 3cqw; padding: 9cqw;
+    background: var(--p-escuro); color: var(--p-claro);
+    position: relative; isolation: isolate;
+  }
+  /* a bolha precisa continuar absoluta: o seletor nao pode alcanca-la */
+  .t-anuncio > :not(.t-bolha) { position: relative; z-index: 1; }
+  .t-anuncio .t-meio { justify-content: flex-start; }
+  .t-anuncio .t-frase { font-size: 9.6cqw; -webkit-line-clamp: 4; line-clamp: 4; }
+  .t-botao {
+    align-self: flex-start; flex: none;
+    font-family: var(--mono); font-size: 3.2cqw; text-transform: uppercase;
+    letter-spacing: .18em; padding: 2.6cqw 5cqw;
+    background: var(--p-claro); color: var(--p-escuro);
+  }
+  .t-bolha {
+    position: absolute; right: -16%; top: -12%; width: 56%; aspect-ratio: 1;
+    border-radius: 50%; background: var(--p-acento); opacity: .22; z-index: 0;
+  }
+
+  /* dica */
+  .t-dica {
+    flex-direction: column; gap: 3cqw; padding: 9cqw;
+    background: var(--p-tinta); color: var(--p-bg);
+  }
+  .t-dica .t-titulo { font-size: 8.4cqw; -webkit-line-clamp: 2; line-clamp: 2; }
+  .t-itens { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.4cqw; flex: 1; align-content: start; counter-reset: d; }
+  .t-itens li {
+    counter-increment: d; font-size: 3.9cqw; line-height: 1.3;
+    display: flex; gap: 2.6cqw; opacity: .88;
+  }
+  .t-itens li::before {
+    content: counter(d, decimal-leading-zero);
+    font-family: var(--mono); color: var(--p-acento); flex: none;
+  }
+  .t-dica .t-marca { align-self: flex-end; }
+
+  /* capa de carrossel */
+  .t-capa {
+    flex-direction: column; justify-content: space-between; padding: 9cqw;
+    background: var(--p-suave); color: var(--p-escuro);
+  }
+  .t-num { font-family: var(--serif); font-size: 26cqw; line-height: .78; font-weight: 300; opacity: .5; }
+  .t-capa .t-titulo { font-size: 10cqw; -webkit-line-clamp: 3; line-clamp: 3; }
+  .t-arraste {
+    font-family: var(--mono); font-size: 3.2cqw; text-transform: uppercase;
+    letter-spacing: .2em; align-self: flex-end;
+  }
+
+  /* número solto */
+  .t-numero {
+    flex-direction: column; align-items: center; justify-content: center; gap: 2cqw;
+    padding: 8cqw; background: var(--p-acento); color: var(--p-claro);
+  }
+  .t-numerao { font-family: var(--serif); font-size: 42cqw; line-height: .8; font-weight: 400; }
+  .t-legenda { font-family: var(--mono); font-size: 3.4cqw; text-transform: uppercase; letter-spacing: .18em; margin: 0; text-align: center; }
+
+  /* retrato */
+  .t-retrato { flex-direction: column; justify-content: space-between; padding: 7cqw; background: var(--p-suave); color: var(--p-escuro); }
+  .t-area { flex: 1; display: grid; place-items: center; position: relative; }
+  .t-area-r {
+    position: absolute; font-family: var(--mono); font-size: 3cqw;
+    text-transform: uppercase; letter-spacing: .2em; opacity: .5;
+  }
+
+  /* stories */
+  .t-sCapa, .t-sCit, .t-sEnq, .t-sBast {
+    flex-direction: column; gap: 4cqw; padding: 7cqw 7cqw 9cqw;
+  }
+  .t-sCapa { background: var(--p-escuro); color: var(--p-claro); }
+  .t-sCapa .t-frase { font-size: 11cqw; }
+  .t-sCapa .t-marca { align-self: flex-start; }
+
+  .t-sCit { background: var(--p-bg); color: var(--p-tinta); }
+  .t-sCit .t-frase { font-size: 10cqw; }
+  .t-ad { align-self: flex-start; }
+
+  .t-sEnq { background: var(--p-suave); color: var(--p-escuro); }
+  .t-pergunta {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15;
+    font-size: 9cqw; line-height: 1.1; margin: 0 0 2cqw;
+  }
+  .t-opcao {
+    display: block; font-family: var(--mono); font-size: 3.6cqw;
+    text-transform: uppercase; letter-spacing: .14em;
+    padding: 3.4cqw 4cqw; text-align: center;
+  }
+  .t-opcao--a { background: var(--p-escuro); color: var(--p-claro); }
+  .t-opcao--b { box-shadow: inset 0 0 0 1px currentColor; }
+
+  .t-sBast { background: var(--p-tinta); color: var(--p-bg); }
+  .t-foto {
+    flex: 1; display: grid; place-items: center;
+    background: color-mix(in oklab, currentColor 12%, transparent);
+  }
+  .t-foto span { font-family: var(--mono); font-size: 3.2cqw; text-transform: uppercase; letter-spacing: .2em; opacity: .5; }
+  .t-sBast .t-legenda { font-family: var(--sans); font-size: 3.8cqw; line-height: 1.4; text-align: left; text-transform: none; letter-spacing: 0; opacity: .85; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tpl-face { transition: none; }
+    .tpl:hover .tpl-face { transform: none; }
+  }
+</style>

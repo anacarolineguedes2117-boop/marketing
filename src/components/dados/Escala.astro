@@ -1,0 +1,74 @@
+---
+/**
+ * Escada tipográfica: cada degrau mostra o tamanho real e o desenho real.
+ * O dado é o próprio espécime — a barra é só a leitura secundária.
+ */
+import { passoN, num } from '~/lib/grafico';
+import { escalaTipo } from '~/data/showcase';
+
+const max = Math.max(...escalaTipo.map((e) => e.px));
+const amostra = 'Carolize';
+---
+<figure class="escada" data-grafico>
+  <figcaption class="g-titulo" id="escada-t">Escala tipográfica</figcaption>
+  <ul aria-labelledby="escada-t">
+    {escalaTipo.map((e, i) => (
+      <li class="deg">
+        <span class="deg-meta">
+          <span class="deg-nome">{e.nome}</span>
+          <span class="deg-px">{e.px}px</span>
+        </span>
+        <span
+          class:list={['deg-amostra', `deg-amostra--${e.familia}`]}
+          style={`font-size:clamp(.72rem, ${(e.px / max) * 5.6}vw, ${e.px / 16}rem)`}
+          aria-hidden="true"
+        >{amostra}</span>
+        <span class="deg-trilho">
+          <span
+            class="deg-barra"
+            style={`width:${(e.px / max) * 100}%; background:${passoN(escalaTipo.length - 1 - i, escalaTipo.length)}`}
+            tabindex="0"
+            data-ponto data-rotulo={e.nome} data-valor={`${num(e.px)}px`} data-nota={e.uso}
+          ></span>
+        </span>
+        <span class="deg-uso">{e.uso}</span>
+      </li>
+    ))}
+  </ul>
+  <details class="g-tabela">
+    <summary>Ver os dados em tabela</summary>
+    <table>
+      <thead><tr><th>Degrau</th><th>Tamanho</th><th>Família</th><th>Uso</th></tr></thead>
+      <tbody>
+        {escalaTipo.map((e) => (
+          <tr><td>{e.nome}</td><td>{e.px}px</td><td>{e.familia}</td><td>{e.uso}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </details>
+</figure>
+
+<style>
+  .escada { margin: 0; display: grid; gap: 1.1rem; }
+  .escada ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .deg {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr) 7rem 9rem;
+    gap: 1rem; align-items: baseline;
+    padding-block: .7rem; border-top: 1px solid var(--linha);
+  }
+  .deg-meta { display: grid; gap: .15rem; }
+  .deg-nome { font-family: var(--mono); font-size: var(--t-label); text-transform: uppercase; letter-spacing: .14em; }
+  .deg-px { font-family: var(--mono); font-size: var(--t-label); color: var(--tinta-3); font-variant-numeric: tabular-nums; }
+  .deg-amostra { line-height: 1; white-space: nowrap; overflow: hidden; }
+  .deg-amostra--serif { font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15; font-weight: 500; letter-spacing: -.02em; }
+  .deg-amostra--sans { font-family: var(--sans); font-weight: 400; }
+  .deg-amostra--mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: .18em; }
+  .deg-trilho { display: block; height: .5rem; background: color-mix(in oklab, var(--tinta) 7%, transparent); align-self: center; }
+  .deg-barra { display: block; height: 100%; border-radius: 0 4px 4px 0; outline-offset: 2px; }
+  .deg-uso { font-size: var(--t-label); color: var(--tinta-3); }
+  @media (max-width: 62rem) {
+    .deg { grid-template-columns: 5rem minmax(0, 1fr); }
+    .deg-trilho, .deg-uso { display: none; }
+  }
+</style>

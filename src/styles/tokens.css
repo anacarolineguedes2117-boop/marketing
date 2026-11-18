@@ -121,6 +121,19 @@
 }
 
 /* --- temas de secao ------------------------------------------------------ */
+/* 'claro' repoe os valores do :root — permite um cartao claro dentro de uma
+   secao escura sem herdar as cores invertidas. */
+[data-tema='claro'] {
+  --bg: var(--creme);
+  --tinta: var(--preto);
+  --tinta-2: color-mix(in oklab, var(--preto) 82%, var(--creme));
+  --tinta-3: color-mix(in oklab, var(--preto) 78%, var(--creme));
+  --acento: var(--vinho);
+  --marca: var(--rosa);
+  --linha: color-mix(in oklab, var(--preto) 14%, transparent);
+  --linha-forte: color-mix(in oklab, var(--preto) 26%, transparent);
+}
+
 [data-tema='escuro'] {
   --bg: var(--preto);
   --tinta: var(--creme);

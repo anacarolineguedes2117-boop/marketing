@@ -1,0 +1,44 @@
+---
+/** Revela o conteudo quando ele entra na viewport. Uma so animacao, variada. */
+interface Props {
+  modo?: 'sobe' | 'fade' | 'cortina' | 'escala' | 'desliza';
+  atraso?: number;       // segundos
+  class?: string;
+  como?: keyof HTMLElementTagNameMap;
+  id?: string;
+  style?: string;
+}
+const { modo = 'sobe', atraso = 0, class: klass = '', como = 'div', id, style = '' } = Astro.props;
+const Tag = como as any;
+---
+<Tag
+  class:list={['revelar', klass]}
+  data-revelar={modo}
+  id={id}
+  style={`--atraso:${atraso}s;${style}`}
+>
+  <slot />
+</Tag>
+<style is:global>
+  [data-revelar] {
+    --atraso: 0s;
+    transition:
+      opacity .82s var(--ease) var(--atraso),
+      transform .82s var(--ease) var(--atraso),
+      clip-path .95s var(--ease-suave) var(--atraso);
+    will-change: opacity, transform;
+  }
+  [data-revelar='sobe']    { opacity: 0; transform: translateY(1.8rem); }
+  [data-revelar='fade']    { opacity: 0; }
+  [data-revelar='escala']  { opacity: 0; transform: scale(.955); }
+  [data-revelar='desliza'] { opacity: 0; transform: translateX(-1.4rem); }
+  [data-revelar='cortina'] { clip-path: inset(0 0 100% 0); opacity: .999; }
+
+  [data-revelar][data-visivel] {
+    opacity: 1; transform: none; clip-path: inset(0 0 0 0);
+    will-change: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-revelar] { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none; }
+  }
+</style>

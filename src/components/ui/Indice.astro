@@ -1,0 +1,68 @@
+---
+/**
+ * Indice de capitulos: barra de progresso + atalhos numerados.
+ * Em telas pequenas vira uma faixa fina no topo.
+ */
+import { capitulos } from '~/data/capitulos';
+---
+<nav class="indice" aria-label="Capítulos">
+  <span class="indice-barra" data-progresso><span class="indice-fita"></span></span>
+  <ol class="indice-lista">
+    {capitulos.map((c) => (
+      <li>
+        <a href={`#${c.id}`} data-indice-item={c.id} class="indice-link">
+          <span class="indice-n">{c.n}</span>
+          <span class="indice-t">{c.titulo}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+<style>
+  .indice {
+    position: fixed; z-index: 40;
+    right: clamp(.9rem, 2vw, 1.9rem);
+    top: 50%; translate: 0 -50%;
+    display: flex; align-items: center; gap: .9rem;
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+  .indice-barra {
+    --p: 0;
+    width: 1px; height: clamp(8rem, 22vh, 15rem);
+    background: rgb(255 255 255 / .28); position: relative; order: 2;
+  }
+  .indice-fita {
+    position: absolute; inset-inline: -.5px; top: 0;
+    height: calc(var(--p) * 100%); background: #fff;
+    transition: height .12s linear;
+  }
+  .indice-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: .52rem; order: 1; text-align: right; }
+  .indice-link {
+    display: flex; align-items: baseline; justify-content: flex-end; gap: .55rem;
+    text-decoration: none; font-family: var(--mono); font-size: .62rem;
+    letter-spacing: .14em; text-transform: uppercase;
+    opacity: .42; transition: opacity .3s var(--ease);
+  }
+  .indice-link:hover, .indice-link:focus-visible { opacity: 1; }
+  .indice-link[data-ativo] { opacity: 1; }
+  .indice-t {
+    max-width: 0; overflow: clip; white-space: nowrap;
+    transition: max-width .44s var(--ease), opacity .3s var(--ease);
+    opacity: 0;
+  }
+  .indice-link:hover .indice-t,
+  .indice-link:focus-visible .indice-t,
+  .indice-link[data-ativo] .indice-t { max-width: 9rem; opacity: 1; }
+  .indice-n { font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 64rem) {
+    .indice { top: 0; right: 0; left: 0; translate: 0; height: 2px; mix-blend-mode: normal; }
+    .indice-lista { display: none; }
+    .indice-barra {
+      width: 100%; height: 2px; background: color-mix(in oklab, var(--tinta) 12%, transparent);
+    }
+    .indice-fita { inset: 0 auto 0 0; width: calc(var(--p) * 100%); height: 100%; background: var(--marca); }
+  }
+  @media (prefers-reduced-motion: reduce) { .indice-t { transition: none; } }
+</style>

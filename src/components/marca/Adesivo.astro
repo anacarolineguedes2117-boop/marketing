@@ -1,0 +1,37 @@
+---
+/**
+ * Adesivo do universo grafico. Formas em tools/stickers.py.
+ * Decorativo por definicao: sempre aria-hidden.
+ */
+import { adesivos, type NomeAdesivo } from '~/lib/stickers';
+
+interface Props {
+  nome: NomeAdesivo;
+  tamanho?: number | string;
+  cor?: string;
+  /** Giro em graus — intervencoes nunca ficam perfeitamente alinhadas. */
+  giro?: number;
+  class?: string;
+  style?: string;
+}
+const { nome, tamanho = 40, cor = 'currentColor', giro = 0, class: klass = '', style = '' } = Astro.props;
+const a = adesivos[nome];
+const t = typeof tamanho === 'number' ? `${tamanho}px` : tamanho;
+const [, , vw, vh] = a.vb.split(' ').map(Number);
+const prop = vh / vw;
+---
+<svg
+  class:list={['adesivo', klass]}
+  viewBox={a.vb}
+  style={`width:${t};height:calc(${t} * ${prop});${giro ? `rotate:${giro}deg;` : ''}${style}`}
+  aria-hidden="true" focusable="false"
+>
+  <path
+    d={a.d}
+    fill={a.t === 'preenchido' ? cor : 'none'}
+    stroke={a.t === 'traco' ? cor : 'none'}
+    stroke-width={a.t === 'traco' ? (a.lw ?? 2.5) : undefined}
+    stroke-linecap="round" stroke-linejoin="round"
+  />
+</svg>
+<style>.adesivo { display: block; overflow: visible; pointer-events: none; }</style>

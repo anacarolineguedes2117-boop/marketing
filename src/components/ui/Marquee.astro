@@ -1,0 +1,41 @@
+---
+/** Faixa de texto em movimento continuo. Pausa no hover e no foco. */
+interface Props {
+  itens: string[];
+  velocidade?: number;   // segundos por volta
+  sentido?: 'esq' | 'dir';
+  class?: string;
+  separador?: string;
+}
+const { itens, velocidade = 46, sentido = 'esq', class: klass = '', separador = '·' } = Astro.props;
+---
+<div class:list={['marquee', klass]} style={`--v:${velocidade}s`} data-sentido={sentido} aria-hidden="true">
+  <div class="mq-trilho">
+    {[0, 1].map(() => (
+      <div class="mq-grupo">
+        {itens.map((t: string) => (
+          <><span class="mq-item">{t}</span><span class="mq-sep">{separador}</span></>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
+<style>
+  .marquee {
+    overflow: clip;
+    width: 100%;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .mq-trilho { display: flex; width: max-content; animation: desfila var(--v) linear infinite; }
+  [data-sentido='dir'] .mq-trilho { animation-direction: reverse; }
+  .mq-grupo { display: flex; align-items: center; flex: none; }
+  .mq-item, .mq-sep { white-space: nowrap; }
+  .mq-sep { opacity: .4; padding-inline: .9em; }
+  .marquee:hover .mq-trilho { animation-play-state: paused; }
+  @keyframes desfila { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .mq-trilho { animation: none; }
+    .marquee { mask-image: none; -webkit-mask-image: none; overflow-x: auto; }
+  }
+</style>

@@ -1,0 +1,213 @@
+---
+import Simbolo from '~/components/marca/Simbolo.astro';
+import Selo from '~/components/marca/Selo.astro';
+import { capitulos } from '~/data/capitulos';
+import { site, redesAtivas } from '~/data/site';
+
+interface Props { compacto?: boolean }
+const { compacto = false } = Astro.props;
+const redes = redesAtivas();
+const raiz = compacto ? '/' : '#abertura';
+---
+<header class="topo" data-topo>
+  <a class="topo-marca" href={raiz} aria-label={`${site.nome} — início`}>
+    <Simbolo tamanho={26} fragmento={false} />
+    <span class="topo-nome serif">CAROLIZE</span>
+  </a>
+
+  <nav class="topo-atalhos" aria-label="Seções">
+    <a href="/projetos">Projetos</a>
+    <a href="/marca">A marca</a>
+    <a href={compacto ? '/#contato' : '#contato'}>Contato</a>
+  </nav>
+
+  <button class="topo-btn" type="button" aria-expanded="false" aria-controls="menu-geral" data-abrir-menu>
+    <span class="topo-btn-t" data-rotulo-menu>Índice</span>
+    <span class="topo-btn-i" aria-hidden="true"><i></i><i></i></span>
+  </button>
+</header>
+
+<div class="menu" id="menu-geral" data-menu hidden>
+  <div class="menu-grade env">
+    <div class="menu-col">
+      <p class="label">Capítulos</p>
+      <ol class="menu-lista">
+        {capitulos.map((c) => (
+          <li>
+            <a href={compacto ? `/#${c.id}` : `#${c.id}`} data-fechar-menu>
+              <span class="menu-n num">{c.n}</span>
+              <span class="menu-t">{c.titulo}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <div class="menu-col menu-col--lado">
+      <p class="label">Páginas</p>
+      <ul class="menu-lista menu-lista--simples">
+        <li><a href="/projetos" data-fechar-menu><span class="menu-t">Projetos</span></a></li>
+        <li><a href="/marca" data-fechar-menu><span class="menu-t">Manual da marca</span></a></li>
+      </ul>
+      {redes.length > 0 && (
+        <>
+          <p class="label menu-label2">Contato</p>
+          <ul class="menu-redes">
+            {redes.map((r) => (
+              <li><a href={r.url} target="_blank" rel="noopener noreferrer">{r.nome}</a></li>
+            ))}
+          </ul>
+        </>
+      )}
+      <Selo class="menu-selo" tamanho={118} cor="var(--creme)" acento="var(--rosa)" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .topo {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+    padding: clamp(.85rem, 1.6vw, 1.5rem) var(--gutter);
+    color: var(--tinta);
+    transition: color .7s var(--ease), translate .45s var(--ease);
+  }
+  :global(html[data-topo-oculto]) .topo { translate: 0 -110%; }
+
+  .topo-marca {
+    display: inline-flex; align-items: center; gap: .62rem;
+    text-decoration: none;
+  }
+  .topo-nome {
+    font-size: .98rem; font-weight: 600; letter-spacing: .07em;
+    font-variation-settings: 'opsz' 144, 'SOFT' 15, 'WONK' 0;
+  }
+  .topo-atalhos { display: flex; gap: 1.6rem; }
+  .topo-atalhos a {
+    font-family: var(--mono); font-size: var(--t-label);
+    text-transform: uppercase; letter-spacing: var(--track-label);
+    text-decoration: none; position: relative; padding-block: .2em;
+  }
+  .topo-atalhos a::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: currentColor; transform: scaleX(0); transform-origin: left;
+    transition: transform .34s var(--ease);
+  }
+  .topo-atalhos a:hover::after, .topo-atalhos a:focus-visible::after { transform: scaleX(1); }
+  @media (max-width: 56rem) { .topo-atalhos { display: none; } }
+
+  .topo-btn {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: none; border: 0; cursor: pointer; padding: .35rem 0;
+    font-family: var(--mono); font-size: var(--t-label);
+    text-transform: uppercase; letter-spacing: var(--track-label);
+  }
+  .topo-btn-i { display: grid; gap: 4px; width: 20px; }
+  .topo-btn-i i {
+    display: block; height: 1px; background: currentColor;
+    transition: transform .34s var(--ease), width .34s var(--ease);
+    width: 20px;
+  }
+  .topo-btn-i i:last-child { width: 13px; margin-left: auto; }
+  .topo-btn:hover .topo-btn-i i:last-child { width: 20px; }
+  .topo-btn[aria-expanded='true'] .topo-btn-i i:first-child { transform: translateY(2.5px) rotate(13deg); }
+  .topo-btn[aria-expanded='true'] .topo-btn-i i:last-child { transform: translateY(-2.5px) rotate(-13deg); width: 20px; }
+
+  /* --- painel ------------------------------------------------------------ */
+  .menu {
+    position: fixed; inset: 0; z-index: 45;
+    background: var(--preto); color: var(--creme);
+    display: grid; align-content: center;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path .72s var(--ease-suave);
+  }
+  .menu[hidden] { display: none; }
+  :global(html[data-menu-aberto]) .menu { clip-path: inset(0 0 0 0); }
+
+  .menu-grade {
+    display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--gutter);
+    align-items: start; padding-block: clamp(5rem, 12vh, 8rem) 2rem;
+  }
+  @media (max-width: 56rem) { .menu-grade { grid-template-columns: 1fr; } }
+
+  .menu-col .label { color: color-mix(in oklab, var(--creme) 44%, var(--preto)); margin-bottom: 1.4rem; }
+  .menu-label2 { margin-top: 2.4rem; }
+  .menu-lista { list-style: none; margin: 0; padding: 0; counter-reset: none; }
+  .menu-lista a {
+    display: flex; align-items: baseline; gap: 1.1rem; text-decoration: none;
+    padding-block: .22em; opacity: .62;
+    transition: opacity .3s var(--ease), translate .4s var(--ease);
+  }
+  .menu-lista a:hover, .menu-lista a:focus-visible { opacity: 1; translate: .55rem 0; }
+  .menu-n { font-size: .78rem; opacity: .55; font-family: var(--mono); letter-spacing: .1em; }
+  .menu-t {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15;
+    font-size: clamp(1.9rem, 5.2vw, 3.4rem); font-weight: 400; line-height: 1.12;
+    letter-spacing: -.02em;
+  }
+  .menu-lista--simples .menu-t { font-size: clamp(1.5rem, 3.4vw, 2.2rem); }
+
+  .menu-redes { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+  .menu-redes a {
+    font-family: var(--mono); font-size: var(--t-peq); text-decoration: none;
+    opacity: .72; transition: opacity .3s var(--ease);
+  }
+  .menu-redes a:hover { opacity: 1; }
+  .menu-selo { margin-top: 2.8rem; opacity: .8; }
+  @media (max-width: 56rem) { .menu-selo { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .menu, .topo, .menu-lista a { transition: none; }
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-abrir-menu]');
+  const painel = document.querySelector<HTMLElement>('[data-menu]');
+  const rotulo = document.querySelector<HTMLElement>('[data-rotulo-menu]');
+  const raiz = document.documentElement;
+
+  if (btn && painel) {
+    let aberto = false;
+    const focaveis = () =>
+      [...painel.querySelectorAll<HTMLElement>('a[href], button')];
+
+    const alternar = (estado?: boolean) => {
+      aberto = estado ?? !aberto;
+      btn.setAttribute('aria-expanded', String(aberto));
+      raiz.toggleAttribute('data-menu-aberto', aberto);
+      document.body.style.overflow = aberto ? 'hidden' : '';
+      if (rotulo) rotulo.textContent = aberto ? 'Fechar' : 'Índice';
+      if (aberto) {
+        painel.hidden = false;
+        requestAnimationFrame(() => focaveis()[0]?.focus());
+      } else {
+        setTimeout(() => { if (!aberto) painel.hidden = true; }, 720);
+        btn.focus();
+      }
+    };
+
+    btn.addEventListener('click', () => alternar());
+    painel.querySelectorAll('[data-fechar-menu]').forEach((a) =>
+      a.addEventListener('click', () => alternar(false)),
+    );
+    addEventListener('keydown', (e) => {
+      if (!aberto) return;
+      if (e.key === 'Escape') { alternar(false); return; }
+      if (e.key !== 'Tab') return;
+      const f = focaveis();
+      if (!f.length) return;
+      const primeiro = f[0]!, ultimo = f[f.length - 1]!;
+      if (e.shiftKey && document.activeElement === primeiro) { e.preventDefault(); ultimo.focus(); }
+      else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primeiro.focus(); }
+    });
+  }
+
+  // esconde o cabecalho ao descer, revela ao subir
+  let ultimo = 0;
+  addEventListener('scroll', () => {
+    if (raiz.hasAttribute('data-menu-aberto')) return;
+    const y = window.scrollY;
+    raiz.toggleAttribute('data-topo-oculto', y > 220 && y > ultimo);
+    ultimo = y;
+  }, { passive: true });
+</script>

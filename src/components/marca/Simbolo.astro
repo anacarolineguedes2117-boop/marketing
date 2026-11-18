@@ -1,0 +1,43 @@
+---
+/**
+ * Simbolo da CAROLIZE. Um O que se abre em C — e um fragmento que se solta.
+ * Abaixo de ~40px use `fragmento={false}`: o detalhe vira sujeira.
+ */
+import { brand } from '~/lib/brand-paths';
+
+interface Props {
+  tamanho?: number | string;
+  cor?: string;
+  acento?: string;
+  fragmento?: boolean;
+  /** Gira lentamente enquanto a pagina rola. */
+  girar?: boolean;
+  class?: string;
+  rotulo?: string;
+}
+const {
+  tamanho = 64, cor = 'currentColor', acento = 'var(--marca)',
+  fragmento = true, girar = false, class: klass = '', rotulo,
+} = Astro.props;
+const t = typeof tamanho === 'number' ? `${tamanho}px` : tamanho;
+const { symbol } = brand;
+---
+<svg
+  class:list={['simbolo', girar && 'girar', klass]}
+  viewBox="-62 -62 124 124"
+  style={`width:${t};height:${t}`}
+  role={rotulo ? 'img' : 'presentation'}
+  aria-label={rotulo}
+  aria-hidden={rotulo ? undefined : 'true'}
+  focusable="false"
+>
+  {rotulo && <title>{rotulo}</title>}
+  <path d={symbol.ring} fill={cor} />
+  {fragmento && <path class="frag" d={symbol.frag} fill={acento} />}
+</svg>
+<style>
+  .simbolo { display: block; overflow: visible; }
+  .girar { animation: roda 28s linear infinite; }
+  @keyframes roda { to { rotate: 360deg; } }
+  @media (prefers-reduced-motion: reduce) { .girar { animation: none; } }
+</style>

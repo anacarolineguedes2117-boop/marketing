@@ -1,0 +1,128 @@
+---
+/**
+ * CAROLIZE — wordmark.
+ * As curvas vem de src/lib/brand-paths.ts, gerado por tools/build-brand.py.
+ * O O da palavra e o simbolo da marca: um O que se abre em C.
+ */
+import { brand } from '~/lib/brand-paths';
+
+interface Props {
+  /** Anima a entrada (abertura do site). */
+  animar?: boolean;
+  /** Mostra a assinatura justificada sob a palavra. */
+  assinatura?: boolean;
+  /** Mostra o fragmento solto no contador do O. */
+  fragmento?: boolean;
+  cor?: string;
+  acento?: string;
+  class?: string;
+  titulo?: string;
+  /** Renderiza como <h1> acessivel em vez de imagem decorativa. */
+  comoTitulo?: boolean;
+}
+
+const {
+  animar = false, assinatura = false, fragmento = false,
+  cor = 'currentColor', acento = 'var(--marca)',
+  class: klass = '', titulo = 'CAROLIZE', comoTitulo = false,
+} = Astro.props;
+
+const { wordmark: w, signature: s } = brand;
+const alturaTotal = assinatura ? w.cap + s.y : w.cap;
+const vb = `${-w.pad} ${-w.cap - w.pad} ${w.width + w.pad * 2} ${alturaTotal + w.pad * 2}`;
+const letras = w.parts.filter((p) => p.kind === 'glyph');
+const anel = w.parts.find((p) => p.kind === 'ring')!;
+// indice visual de cada letra para o atraso em cascata (o O ocupa a posicao 3)
+const ordem = ['C', 'A', 'R', 'L', 'I', 'Z', 'E'];
+---
+
+<svg
+  class:list={['wordmark', animar && 'animar', klass]}
+  viewBox={vb}
+  role={comoTitulo ? undefined : 'img'}
+  aria-label={comoTitulo ? undefined : titulo}
+  aria-hidden={comoTitulo ? 'true' : undefined}
+  focusable="false"
+>
+  {!comoTitulo && <title>{titulo}</title>}
+
+  <g class="wm-letras" fill={cor}>
+    {letras.map((p) => (
+      <path d={p.d} style={`--i:${ordem.indexOf(p.char!)}`} />
+    ))}
+  </g>
+
+  <g
+    class="wm-anel"
+    style={`--cx:${anel.cx}px; --cy:${anel.cy}px`}
+    transform={`translate(${anel.cx} ${anel.cy}) scale(${anel.s})`}
+  >
+    <path class="wm-anel-forma" d={anel.d} fill={cor} />
+    {fragmento && <path class="wm-frag" d={anel.frag} fill={acento} />}
+  </g>
+
+  {assinatura && (
+    <g class="wm-assinatura" fill={cor} transform={`translate(0 ${s.y})`}>
+      {s.paths.map((p) => <path d={p.d} />)}
+    </g>
+  )}
+</svg>
+
+<style>
+  .wordmark { width: 100%; height: auto; overflow: visible; }
+
+  .animar .wm-letras path,
+  .animar .wm-anel,
+  .animar .wm-frag,
+  .animar .wm-assinatura {
+    animation-fill-mode: both;
+    animation-play-state: paused;
+  }
+  .animar.tocar .wm-letras path,
+  .animar.tocar .wm-anel,
+  .animar.tocar .wm-frag,
+  .animar.tocar .wm-assinatura { animation-play-state: running; }
+
+  .animar .wm-letras path {
+    animation: sobe .78s var(--ease) both;
+    animation-delay: calc(.18s + var(--i) * .052s);
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+  .animar .wm-anel {
+    animation: abre .9s var(--ease-suave) both;
+    animation-delay: .34s;
+    transform-origin: var(--cx) var(--cy);
+  }
+  .animar .wm-frag {
+    animation: solta .7s var(--ease-suave) both;
+    animation-delay: .92s;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+  }
+  .animar .wm-assinatura {
+    animation: surge .9s var(--ease) both;
+    animation-delay: 1.05s;
+  }
+
+  @keyframes sobe {
+    from { opacity: 0; transform: translateY(26%) scaleY(.94); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes abre {
+    from { opacity: 0; rotate: -38deg; scale: .78; }
+    to   { opacity: 1; rotate: 0deg; scale: 1; }
+  }
+  @keyframes solta {
+    0%   { opacity: 0; scale: .2; translate: -18% 16%; }
+    60%  { opacity: 1; }
+    100% { opacity: 1; scale: 1; translate: 0 0; }
+  }
+  @keyframes surge { from { opacity: 0; translate: 0 .5rem; } to { opacity: 1; translate: 0 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animar :is(.wm-letras path, .wm-anel, .wm-frag, .wm-assinatura) {
+      animation: none !important; opacity: 1; transform: none; rotate: 0; scale: 1; translate: 0;
+    }
+  }
+</style>

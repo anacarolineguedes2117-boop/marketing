@@ -1,0 +1,55 @@
+---
+/**
+ * Selo CAROLIZE — carimbo circular com o simbolo ao centro e a assinatura
+ * correndo na circunferencia. Usado como marca de autoria em fechamentos.
+ */
+import Simbolo from './Simbolo.astro';
+
+interface Props {
+  tamanho?: number;
+  texto?: string;
+  cor?: string;
+  acento?: string;
+  /** Segundos por volta. 0 desliga a rotacao. */
+  volta?: number;
+  class?: string;
+}
+const {
+  tamanho = 140,
+  texto = 'CAROLIZE · MARKETING DIGITAL · POR CAROL GUEDES · ',
+  cor = 'currentColor', acento = 'var(--marca)', volta = 34, class: klass = '',
+} = Astro.props;
+
+const id = `selo-${Math.random().toString(36).slice(2, 8)}`;
+const r = 41;
+---
+<div class:list={['selo', klass]} style={`width:${tamanho}px;height:${tamanho}px`}>
+  <svg
+    class="selo-anel" viewBox="0 0 100 100" aria-hidden="true" focusable="false"
+    style={volta ? `--volta:${volta}s` : 'animation:none'}
+  >
+    <defs>
+      <path id={id} d={`M50,${50 - r} a${r},${r} 0 1,1 -0.01,0`} />
+    </defs>
+    <text fill={cor}>
+      <textPath href={`#${id}`} startOffset="0%">{texto}{texto}</textPath>
+    </text>
+  </svg>
+  <Simbolo class="selo-simbolo" tamanho="38%" cor={cor} acento={acento} />
+</div>
+<style>
+  .selo { position: relative; display: grid; place-items: center; }
+  .selo-anel {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    animation: gira var(--volta, 34s) linear infinite;
+  }
+  .selo-anel text {
+    font-family: var(--mono);
+    font-size: 6.4px;
+    letter-spacing: .128em;
+    text-transform: uppercase;
+  }
+  .selo-simbolo { position: relative; }
+  @keyframes gira { to { rotate: 360deg; } }
+  @media (prefers-reduced-motion: reduce) { .selo-anel { animation: none; } }
+</style>

@@ -1,0 +1,47 @@
+---
+/**
+ * Titulo que sobe palavra a palavra de dentro de uma mascara.
+ * O texto completo permanece no DOM para leitores de tela e para busca.
+ */
+interface Props {
+  texto: string;
+  como?: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'div';
+  class?: string;
+  atraso?: number;
+  passo?: number;
+  id?: string;
+}
+const { texto, como = 'h2', class: klass = '', atraso = 0, passo = 0.055, id } = Astro.props;
+const Tag = como as any;
+const palavras = texto.split(/\s+/);
+---
+<Tag class:list={['tr', klass]} id={id} data-revelar="fade" style={`--atraso:0s`}>
+  <span class="so-leitor">{texto}</span>
+  <span aria-hidden="true" class="tr-linhas">
+    {palavras.map((p: string, i: number) => (
+      <span class="tr-p"><span class="tr-i" style={`--d:${(atraso + i * passo).toFixed(3)}s`}>{p}</span></span>
+    ))}
+  </span>
+</Tag>
+<style>
+  .tr { opacity: 1 !important; }
+  .tr-linhas { display: inline; }
+  .tr-p {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: bottom;
+    padding-block: .06em;
+    margin-block: -.06em;
+  }
+  .tr-p:not(:last-child)::after { content: ' '; }
+  .tr-i {
+    display: inline-block;
+    translate: 0 102%;
+    opacity: 0;
+    transition: translate .92s var(--ease-suave) var(--d), opacity .5s linear var(--d);
+  }
+  :global([data-visivel]) .tr-i { translate: 0 0; opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .tr-i { translate: 0; opacity: 1; transition: none; }
+  }
+</style>

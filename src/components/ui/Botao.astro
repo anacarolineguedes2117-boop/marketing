@@ -1,0 +1,92 @@
+---
+/** Botao editorial. Sem caixa colorida: regra, seta e deslocamento. */
+interface Props {
+  href?: string;
+  variante?: 'solido' | 'contorno' | 'texto';
+  externo?: boolean;
+  class?: string;
+  magnetico?: boolean;
+  seta?: boolean;
+  tipo?: 'button' | 'submit';
+  rotuloAria?: string;
+}
+const {
+  href, variante = 'solido', externo = false, class: klass = '',
+  magnetico = true, seta = true, tipo = 'button', rotuloAria,
+} = Astro.props;
+const Tag = (href ? 'a' : 'button') as any;
+const extras = href
+  ? { href, ...(externo ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+  : { type: tipo };
+---
+<Tag
+  class:list={['btn', `btn--${variante}`, klass]}
+  aria-label={rotuloAria}
+  data-magnetico={magnetico ? '8' : undefined}
+  {...extras}
+>
+  <span class="btn-texto"><slot /></span>
+  {seta && (
+    <svg class="btn-seta" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor"
+            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  )}
+</Tag>
+<style>
+  .btn {
+    --mx: 0px; --my: 0px;
+    display: inline-flex; align-items: center; gap: .72em;
+    font-family: var(--mono); font-size: var(--t-label);
+    text-transform: uppercase; letter-spacing: var(--track-label);
+    text-decoration: none; cursor: pointer;
+    padding: 1.02em 1.5em; border: 1px solid transparent; background: none;
+    position: relative; isolation: isolate;
+    translate: var(--mx) var(--my);
+    transition: translate .32s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
+  }
+  .btn-texto { position: relative; z-index: 1; }
+  .btn-seta {
+    width: 1.15em; height: 1.15em; flex: none; z-index: 1;
+    transition: transform .36s var(--ease);
+  }
+  .btn:hover .btn-seta, .btn:focus-visible .btn-seta { transform: translateX(.26em); }
+
+  /* preenchimento que sobe */
+  .btn--solido, .btn--contorno { overflow: clip; }
+  .btn--solido::before, .btn--contorno::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    transform: scaleY(1); transform-origin: bottom;
+    transition: transform .42s var(--ease-suave);
+  }
+  .btn--solido {
+    color: var(--bg); border-color: var(--tinta);
+  }
+  .btn--solido::before { background: var(--tinta); }
+  .btn--solido:hover::before, .btn--solido:focus-visible::before { transform: scaleY(0); }
+  .btn--solido:hover, .btn--solido:focus-visible { color: var(--tinta); }
+
+  .btn--contorno { color: var(--tinta); border-color: var(--linha-forte); }
+  .btn--contorno::before { background: var(--tinta); transform: scaleY(0); }
+  .btn--contorno:hover::before, .btn--contorno:focus-visible::before { transform: scaleY(1); }
+  .btn--contorno:hover, .btn--contorno:focus-visible { color: var(--bg); border-color: var(--tinta); }
+
+  .btn--texto { padding: .35em 0; color: var(--tinta); }
+  .btn--texto::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px; background: currentColor;
+    transform-origin: right; transform: scaleX(1);
+    transition: transform .4s var(--ease);
+  }
+  .btn--texto:hover::after, .btn--texto:focus-visible::after {
+    transform-origin: left; animation: sublinha .62s var(--ease);
+  }
+  @keyframes sublinha { 0% { transform: scaleX(1); transform-origin: right; }
+    49% { transform: scaleX(0); transform-origin: right; }
+    50% { transform: scaleX(0); transform-origin: left; }
+    100% { transform: scaleX(1); transform-origin: left; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .btn::before, .btn-seta { transition: none; animation: none; }
+  }
+</style>

@@ -1,0 +1,22 @@
+{
+  "name": "carolize",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CAROLIZE — Identidade visual e portfolio imersivo. Marketing digital por Carol Guedes.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "brand": "python3 tools/build-brand.py"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.18.2",
+    "lenis": "^1.1.18",
+    "sharp": "^0.33.5",
+    "typescript": "^5.9.3"
+  }
+}

@@ -12,7 +12,8 @@
     "astro": "astro",
     "brand": "python3 tools/build-brand.py",
     "og": "node tools/build-og.mjs",
-    "a11y": "node tools/audit-a11y.mjs"
+    "a11y": "node tools/audit-a11y.mjs",
+    "build:portatil": "npm run build && node tools/build-relativo.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

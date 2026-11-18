@@ -18,12 +18,13 @@ const {
   tamanho = 140,
   texto = 'CAROLIZE · MARKETING DIGITAL · POR CAROL GUEDES · ',
   cor = 'currentColor', acento = 'var(--marca)', volta = 34, class: klass = '',
+  ...resto
 } = Astro.props;
 
 const id = `selo-${Math.random().toString(36).slice(2, 8)}`;
 const r = 41;
 ---
-<div class:list={['selo', klass]} style={`width:${tamanho}px;height:${tamanho}px`}>
+<div class:list={['selo', klass]} style={`width:${tamanho}px;height:${tamanho}px`} {...resto}>
   <svg
     class="selo-anel" viewBox="0 0 100 100" aria-hidden="true" focusable="false"
     style={volta ? `--volta:${volta}s` : 'animation:none'}

@@ -63,7 +63,7 @@ export const categorias: Categoria[] = [
     titulo: 'Branding e design',
     premissa:
       'Identidade não é só o que a marca mostra. É o que ela decide ser toda vez que aparece.',
-    adesivo: 'selo',
+    adesivo: 'asterisco',
     itens: [
       { nome: 'Identidade visual', chave: 'identidade' },
       { nome: 'Branding', chave: 'identidade' },

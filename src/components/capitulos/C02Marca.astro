@@ -1,0 +1,139 @@
+---
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import Simbolo from '~/components/marca/Simbolo.astro';
+---
+<section class="marca capitulo" id="marca" data-capitulo="marca" data-tema="escuro">
+  <div class="env">
+    <Revelar modo="fade" class="marca-cabeca">
+      <span class="label">Capítulo 02</span>
+      <span class="label">Quem é a Carolize</span>
+    </Revelar>
+
+    <div class="marca-grade">
+      <div class="marca-texto">
+        <TextoRevelado
+          como="h2" class="titulo marca-h"
+          texto="Não é sobre publicar. É sobre ser entendida."
+        />
+        <Revelar modo="sobe" atraso={0.1} class="marca-paras">
+          <p class="corpo">
+            A Carolize nasceu da vontade de transformar ideias em comunicação,
+            criatividade em estratégia e marcas em experiências.
+          </p>
+          <p class="corpo">
+            Mais do que produzir conteúdo, acreditamos que cada negócio tem uma
+            identidade que merece ser descoberta, construída e comunicada.
+          </p>
+          <p class="corpo">
+            Criamos, planejamos e desenvolvemos soluções para marcas que desejam
+            se posicionar, se conectar e evoluir.
+          </p>
+        </Revelar>
+      </div>
+
+      <Revelar modo="escala" atraso={0.12} class="equacao" como="figure">
+        <div class="eq-linha eq-linha--1">
+          <span class="eq-palavra">CAROL</span>
+          <span class="eq-nota label">o nome</span>
+        </div>
+        <div class="eq-linha eq-linha--2">
+          <span class="eq-mais" aria-hidden="true">+</span>
+          <span class="eq-palavra eq-palavra--acento">IZE</span>
+          <span class="eq-nota label">o sufixo que vira verbo</span>
+        </div>
+        <div class="eq-regra">
+          <Adesivo nome="rabisco" tamanho="100%" cor="var(--rosa)" />
+        </div>
+        <div class="eq-linha eq-linha--3">
+          <span class="eq-igual" aria-hidden="true">=</span>
+          <span class="eq-resultado">TRANSFORMAR</span>
+        </div>
+        <figcaption class="eq-legenda">
+          Em português e em inglês, <em>-izar</em> transforma substantivo em ação.
+          Carolize é, literalmente, o verbo de colocar uma marca em movimento.
+        </figcaption>
+      </Revelar>
+    </div>
+
+    <Revelar modo="sobe" atraso={0.05} class="marca-valores">
+      {[
+        ['Estratégia antes de estética', 'Bonito sem direção é decoração. Toda decisão visual responde a um objetivo.'],
+        ['Identidade, não template', 'Cada marca recebe um sistema próprio — não uma fôrma com a cor trocada.'],
+        ['Constância acima de volume', 'Aparecer bem poucas vezes vale mais do que aparecer muito de qualquer jeito.'],
+      ].map(([t, d], i) => (
+        <div class="valor">
+          <Simbolo tamanho={17} fragmento={false} cor="var(--rosa)" />
+          <h3 class="valor-t">{t}</h3>
+          <p class="valor-d">{d}</p>
+          <span class="valor-n label">{String(i + 1).padStart(2, '0')}</span>
+        </div>
+      ))}
+    </Revelar>
+  </div>
+</section>
+
+<style>
+  .marca { overflow: clip; }
+  .marca-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem); border-bottom: 1px solid var(--linha);
+  }
+  .marca-grade {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 7vw, 7rem);
+    padding-block: clamp(3rem, 8vh, 6rem);
+    align-items: start;
+  }
+  @media (max-width: 60rem) { .marca-grade { grid-template-columns: 1fr; } }
+
+  .marca-h { max-width: 14ch; margin-bottom: clamp(1.6rem, 4vh, 2.6rem); }
+  .marca-paras { max-width: 42ch; }
+
+  /* --- a equação ---------------------------------------------------------- */
+  .equacao { margin: 0; display: grid; gap: .5rem; justify-items: start; }
+  .eq-linha { display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap; }
+  .eq-palavra, .eq-resultado {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15;
+    font-weight: 500; line-height: .96; letter-spacing: -.015em;
+  }
+  .eq-palavra { font-size: clamp(2.6rem, 6.6vw, 5rem); }
+  .eq-palavra--acento { color: var(--rosa); }
+  .eq-linha--2 { padding-left: clamp(1.5rem, 5vw, 4rem); }
+  .eq-mais, .eq-igual {
+    font-family: var(--serif); font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+    font-weight: 300; color: var(--tinta-3);
+  }
+  .eq-nota { align-self: center; color: var(--tinta-3); }
+  .eq-regra { width: min(100%, 22rem); margin-block: .4rem; }
+  .eq-resultado {
+    font-size: clamp(2.2rem, 6.2vw, 4.6rem);
+    -webkit-text-stroke: 1px var(--creme); color: transparent;
+    letter-spacing: -.02em;
+    transition: color .5s var(--ease);
+  }
+  .equacao:hover .eq-resultado { color: var(--creme); }
+  .eq-legenda {
+    margin-top: 1.6rem; max-width: 36ch;
+    font-size: var(--t-peq); line-height: 1.6; color: var(--tinta-3);
+  }
+  .eq-legenda em { color: var(--rosa); }
+
+  /* --- valores ------------------------------------------------------------ */
+  .marca-valores {
+    display: grid; gap: var(--gutter);
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    padding-top: clamp(2.5rem, 6vh, 4rem);
+    border-top: 1px solid var(--linha);
+  }
+  .valor { position: relative; display: grid; gap: .9rem; align-content: start; padding-right: 2.5rem; }
+  .valor-t {
+    font-family: var(--serif); font-variation-settings: 'opsz' 48, 'SOFT' 15;
+    font-size: clamp(1.1rem, 1.7vw, 1.35rem); font-weight: 500; line-height: 1.25;
+    letter-spacing: -.01em; margin: 0;
+  }
+  .valor-d { font-size: var(--t-peq); line-height: 1.62; color: var(--tinta-2); margin: 0; }
+  .valor-n { position: absolute; top: 0; right: 0; color: var(--tinta-3); }
+  @media (prefers-reduced-motion: reduce) { .eq-resultado { transition: none; } }
+</style>

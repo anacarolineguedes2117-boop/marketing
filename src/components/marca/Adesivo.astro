@@ -14,17 +14,20 @@ interface Props {
   class?: string;
   style?: string;
 }
-const { nome, tamanho = 40, cor = 'currentColor', giro = 0, class: klass = '', style = '' } = Astro.props;
+const {
+  nome, tamanho = 40, cor = 'currentColor', giro = 0, class: klass = '', style = '',
+  ...resto
+} = Astro.props;
 const a = adesivos[nome];
 const t = typeof tamanho === 'number' ? `${tamanho}px` : tamanho;
 const [, , vw, vh] = a.vb.split(' ').map(Number);
-const prop = vh / vw;
 ---
 <svg
   class:list={['adesivo', klass]}
   viewBox={a.vb}
-  style={`width:${t};height:calc(${t} * ${prop});${giro ? `rotate:${giro}deg;` : ''}${style}`}
+  style={`width:${t};aspect-ratio:${vw} / ${vh};${giro ? `rotate:${giro}deg;` : ''}${style}`}
   aria-hidden="true" focusable="false"
+  {...resto}
 >
   <path
     d={a.d}
@@ -34,4 +37,4 @@ const prop = vh / vw;
     stroke-linecap="round" stroke-linejoin="round"
   />
 </svg>
-<style>.adesivo { display: block; overflow: visible; pointer-events: none; }</style>
+<style>.adesivo { display: block; height: auto; overflow: visible; pointer-events: none; }</style>

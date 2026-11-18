@@ -7,9 +7,12 @@ interface Props {
   class?: string;
   separador?: string;
 }
-const { itens, velocidade = 46, sentido = 'esq', class: klass = '', separador = '·' } = Astro.props;
+const {
+  itens, velocidade = 46, sentido = 'esq', class: klass = '', separador = '·',
+  ...resto
+} = Astro.props;
 ---
-<div class:list={['marquee', klass]} style={`--v:${velocidade}s`} data-sentido={sentido} aria-hidden="true">
+<div class:list={['marquee', klass]} style={`--v:${velocidade}s`} data-sentido={sentido} aria-hidden="true" {...resto}>
   <div class="mq-trilho">
     {[0, 1].map(() => (
       <div class="mq-grupo">

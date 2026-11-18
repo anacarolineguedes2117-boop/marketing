@@ -1,0 +1,123 @@
+---
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import { categorias } from '~/data/servicos';
+import type { NomeAdesivo } from '~/lib/stickers';
+---
+<section class="servicos capitulo" id="servicos" data-capitulo="servicos" data-tema="claro">
+  <div class="env">
+    <Revelar modo="fade" class="serv-cabeca">
+      <span class="label">Capítulo 03</span>
+      <span class="label">O que fazemos</span>
+    </Revelar>
+
+    <div class="serv-intro">
+      <TextoRevelado
+        como="h2" class="titulo serv-h"
+        texto="Cinco frentes. Uma única direção."
+      />
+      <Revelar modo="sobe" atraso={0.1}>
+        <p class="lede">
+          Não vendemos peças avulsas. Cada frente existe porque resolve uma
+          parte do mesmo problema: fazer uma marca ser compreendida.
+        </p>
+      </Revelar>
+    </div>
+
+    <div class="serv-lista">
+      {categorias.map((c, i) => (
+        <Revelar modo="sobe" atraso={0.04} class="cat" como="article" id={c.id}>
+          <div class="cat-cabeca">
+            <span class="cat-n num">{c.n}</span>
+            <Adesivo
+              nome={c.adesivo as NomeAdesivo} tamanho={34}
+              cor="var(--marca)" giro={i % 2 ? 8 : -6} class="cat-ad"
+            />
+          </div>
+
+          <div class="cat-titulo">
+            <h3 class="sub">{c.titulo}</h3>
+            <p class="cat-premissa">{c.premissa}</p>
+          </div>
+
+          <ul class="cat-itens">
+            {c.itens.map((s) => (
+              <li class="cat-item"><span>{s.nome}</span></li>
+            ))}
+          </ul>
+        </Revelar>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .serv-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem); border-bottom: 1px solid var(--linha);
+  }
+  .serv-intro {
+    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(1.6rem, 5vw, 5rem); align-items: end;
+    padding-block: clamp(3rem, 8vh, 5.5rem);
+  }
+  .serv-h { max-width: 13ch; }
+  @media (max-width: 60rem) { .serv-intro { grid-template-columns: 1fr; align-items: start; } }
+
+  .serv-lista { display: grid; }
+  .cat {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: clamp(1.2rem, 3vw, 3rem);
+    padding-block: clamp(2.2rem, 5vh, 3.4rem);
+    border-top: 1px solid var(--linha);
+    align-items: start;
+  }
+  .cat:last-child { border-bottom: 1px solid var(--linha); }
+
+  .cat-cabeca { display: grid; gap: 1.4rem; justify-items: start; }
+  .cat-n { font-size: clamp(2rem, 3.4vw, 3rem); color: var(--tinta-3); }
+  .cat-ad { transition: rotate .6s var(--ease), scale .6s var(--ease); }
+  .cat:hover .cat-ad { rotate: 0deg; scale: 1.12; }
+
+  .cat-titulo h3 { margin: 0 0 .7rem; letter-spacing: -.015em; }
+  .cat-premissa {
+    font-size: var(--t-peq); line-height: 1.62; color: var(--tinta-2);
+    max-width: 32ch; margin: 0; text-wrap: pretty;
+  }
+
+  .cat-itens {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(1rem, 2.5vw, 2.5rem);
+    align-self: start;
+  }
+  .cat-item {
+    border-bottom: 1px solid var(--linha);
+    padding-block: .62rem;
+    font-size: var(--t-peq);
+    display: flex; align-items: baseline; gap: .6rem;
+  }
+  .cat-item::before {
+    content: ''; flex: none; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--marca); opacity: 0;
+    transition: opacity .3s var(--ease);
+  }
+  .cat-item span { transition: translate .32s var(--ease); display: inline-block; }
+  .cat-item:hover::before { opacity: 1; }
+  .cat-item:hover span { translate: .25rem 0; }
+
+  @media (max-width: 68rem) {
+    .cat { grid-template-columns: 3.5rem minmax(0, 1fr); }
+    .cat-itens { grid-column: 1 / -1; }
+  }
+  @media (max-width: 40rem) {
+    .cat { grid-template-columns: 1fr; gap: 1rem; }
+    .cat-cabeca { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+    .cat-itens { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cat-ad, .cat-item span, .cat-item::before { transition: none; }
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import { etapas } from '~/data/processo';
+---
+<section class="processo capitulo" id="processo" data-capitulo="processo" data-tema="vinho">
+  <div class="env">
+    <Revelar modo="fade" class="proc-cabeca">
+      <span class="label">Capítulo 04</span>
+      <span class="label">Nosso processo</span>
+    </Revelar>
+
+    <div class="proc-intro">
+      <TextoRevelado como="h2" class="titulo proc-h" texto="Cinco etapas. Nenhuma pulada." />
+      <Revelar modo="sobe" atraso={0.1}>
+        <p class="lede">
+          O caminho é sempre o mesmo, independente do tamanho do projeto.
+          É ele que impede que a criação vire chute.
+        </p>
+      </Revelar>
+      <Adesivo nome="seta" tamanho={80} cor="var(--acento)" giro={58} class="proc-seta" data-parallax="22" />
+    </div>
+
+    <ol class="proc-lista">
+      {etapas.map((e, i) => (
+        <Revelar modo="sobe" atraso={0.03} como="li" class="etapa" style={`--i:${i}`}>
+          <span class="etapa-n num">{e.n}</span>
+          <div class="etapa-corpo">
+            <h3 class="etapa-verbo">{e.verbo}</h3>
+            <p class="etapa-resumo">{e.resumo}</p>
+            <p class="etapa-detalhe">{e.detalhe}</p>
+          </div>
+          <div class="etapa-entrega">
+            <span class="label">Entrega</span>
+            <p>{e.entrega}</p>
+          </div>
+        </Revelar>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .processo { overflow: clip; }
+  .proc-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem); border-bottom: 1px solid var(--linha);
+  }
+  .proc-intro {
+    position: relative;
+    display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(1.6rem, 5vw, 5rem); align-items: end;
+    padding-block: clamp(3rem, 8vh, 5.5rem);
+  }
+  .proc-h { max-width: 12ch; }
+  .proc-seta { position: absolute; right: 2%; top: 8%; opacity: .5; translate: 0 var(--py, 0px); }
+  @media (max-width: 60rem) {
+    .proc-intro { grid-template-columns: 1fr; align-items: start; }
+    .proc-seta { display: none; }
+  }
+
+  .proc-lista { list-style: none; margin: 0; padding: 0; display: grid; }
+
+  .etapa {
+    /* descida em diagonal: cada etapa avança um degrau para a direita */
+    margin-left: calc(var(--i) * clamp(0rem, 2.4vw, 3.4rem));
+    display: grid;
+    grid-template-columns: clamp(4rem, 9vw, 8rem) minmax(0, 1fr) minmax(0, 11rem);
+    gap: clamp(1rem, 3vw, 2.6rem);
+    padding-block: clamp(1.8rem, 4.4vh, 2.8rem);
+    border-top: 1px solid var(--linha);
+    align-items: start;
+    transition: background-color .4s var(--ease);
+  }
+  .proc-lista .etapa:last-child { border-bottom: 1px solid var(--linha); }
+  .etapa-n {
+    font-size: clamp(2.6rem, 6vw, 5.2rem);
+    color: var(--acento); opacity: .72;
+    transition: opacity .4s var(--ease), translate .5s var(--ease);
+  }
+  .etapa:hover .etapa-n { opacity: 1; translate: 0 -.12em; }
+
+  .etapa-verbo {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15;
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 500;
+    line-height: 1; letter-spacing: -.02em; margin: 0 0 .5rem;
+  }
+  .etapa-resumo { font-size: var(--t-corpo); margin: 0 0 .7rem; color: var(--tinta); }
+  .etapa-detalhe {
+    font-size: var(--t-peq); line-height: 1.64; color: var(--tinta-2);
+    max-width: 44ch; margin: 0; text-wrap: pretty;
+  }
+  .etapa-entrega { display: grid; gap: .5rem; align-content: start; }
+  .etapa-entrega p {
+    margin: 0; font-family: var(--mono); font-size: var(--t-peq);
+    line-height: 1.45; color: var(--acento);
+  }
+  @media (max-width: 62rem) {
+    .etapa { grid-template-columns: clamp(3rem, 9vw, 5rem) minmax(0, 1fr); margin-left: 0; }
+    .etapa-entrega { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) { .etapa, .etapa-n { transition: none; } }
+</style>

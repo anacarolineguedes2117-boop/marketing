@@ -1,0 +1,29 @@
+---
+import Base from '~/layouts/Base.astro';
+import Simbolo from '~/components/marca/Simbolo.astro';
+import Botao from '~/components/ui/Botao.astro';
+---
+<Base titulo="Página não encontrada" privada>
+  <section class="erro" data-tema="claro">
+    <div class="env">
+      <Simbolo tamanho={56} girar cor="var(--marca)" acento="var(--vinho)" />
+      <p class="label">Erro 404</p>
+      <h1 class="display">Esta página saiu do ar — ou nunca esteve nele.</h1>
+      <p class="lede">
+        O endereço que você tentou abrir não existe. Volte para o início ou
+        veja os projetos.
+      </p>
+      <div class="erro-acoes">
+        <Botao href="/" variante="solido">Voltar ao início</Botao>
+        <Botao href="/projetos" variante="contorno">Ver projetos</Botao>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .erro { min-height: 76svh; display: grid; align-content: center; padding-block: 8rem 5rem; }
+  .erro .label { margin: 1.6rem 0 .8rem; }
+  .erro h1 { max-width: 16ch; margin-bottom: 1.4rem; }
+  .erro .lede { max-width: 42ch; }
+  .erro-acoes { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 2.2rem; }
+</style>

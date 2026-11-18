@@ -1,0 +1,74 @@
+---
+import { getCollection } from 'astro:content';
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import CartaoProjeto from '~/components/pecas/CartaoProjeto.astro';
+import Botao from '~/components/ui/Botao.astro';
+
+const projetos = (await getCollection('projetos', (p) => p.data.publicado))
+  .sort((a, b) => a.data.ordem - b.data.ordem);
+const temConceitual = projetos.some((p) => p.data.conceitual);
+---
+<section class="projetos capitulo papel" id="projetos" data-capitulo="projetos" data-tema="papel">
+  <div class="env">
+    <Revelar modo="fade" class="pr-cabeca">
+      <span class="label">Capítulo 05</span>
+      <span class="label">Projetos</span>
+    </Revelar>
+
+    <div class="pr-intro">
+      <TextoRevelado como="h2" class="titulo pr-h" texto="Estudos de caso, não galeria de imagens." />
+      <Revelar modo="sobe" atraso={0.1}>
+        <p class="lede">
+          Cada projeto é apresentado pelo raciocínio: qual era o problema,
+          qual foi o conceito e o que a solução resolveu.
+        </p>
+      </Revelar>
+    </div>
+
+    {temConceitual && (
+      <Revelar modo="sobe" class="pr-aviso">
+        <p>
+          <strong>Os projetos abaixo são conceituais.</strong> São estudos
+          desenvolvidos para demonstrar método e repertório — não foram
+          executados para clientes e não apresentam resultados reais.
+          Trabalhos de clientes entram aqui conforme forem liberados.
+        </p>
+      </Revelar>
+    )}
+
+    <div class="pr-lista">
+      {projetos.map((p, i) => <CartaoProjeto projeto={p} indice={i} />)}
+    </div>
+
+    <Revelar modo="sobe" class="pr-fim">
+      <Botao href="/projetos" variante="contorno">Ver todos os projetos</Botao>
+    </Revelar>
+  </div>
+</section>
+
+<style>
+  .pr-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem); border-bottom: 1px solid var(--linha);
+  }
+  .pr-intro {
+    display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(1.6rem, 5vw, 5rem); align-items: end;
+    padding-block: clamp(3rem, 8vh, 5rem) clamp(1.5rem, 4vh, 2.5rem);
+  }
+  .pr-h { max-width: 15ch; }
+  @media (max-width: 60rem) { .pr-intro { grid-template-columns: 1fr; align-items: start; } }
+
+  .pr-aviso {
+    border-left: 2px solid var(--marca);
+    padding: .9rem 0 .9rem 1.2rem;
+    margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+    max-width: 62ch;
+  }
+  .pr-aviso p { margin: 0; font-size: var(--t-peq); line-height: 1.64; color: var(--tinta-2); }
+  .pr-aviso strong { color: var(--tinta); font-weight: 600; }
+
+  .pr-lista { display: grid; }
+  .pr-fim { padding-top: clamp(2rem, 5vh, 3rem); }
+</style>

@@ -13,6 +13,7 @@ interface Props {
 const {
   href, variante = 'solido', externo = false, class: klass = '',
   magnetico = true, seta = true, tipo = 'button', rotuloAria,
+  ...resto
 } = Astro.props;
 const Tag = (href ? 'a' : 'button') as any;
 const extras = href
@@ -24,6 +25,7 @@ const extras = href
   aria-label={rotuloAria}
   data-magnetico={magnetico ? '8' : undefined}
   {...extras}
+  {...resto}
 >
   <span class="btn-texto"><slot /></span>
   {seta && (

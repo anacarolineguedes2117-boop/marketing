@@ -1,0 +1,306 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Peca from '~/components/pecas/Peca.astro';
+import CarimboConceitual from '~/components/pecas/CarimboConceitual.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import Botao from '~/components/ui/Botao.astro';
+import { papeis, tintaSobre } from '~/lib/cores';
+import { rotulosPeca } from '~/components/pecas/tipos';
+
+export async function getStaticPaths() {
+  const projetos = (await getCollection('projetos', (p) => p.data.publicado))
+    .sort((a, b) => a.data.ordem - b.data.ordem);
+  return projetos.map((p, i) => ({
+    params: { id: p.id },
+    props: { projeto: p, proximo: projetos[(i + 1) % projetos.length]!, indice: i },
+  }));
+}
+
+const { projeto, proximo, indice } = Astro.props;
+const d = projeto.data;
+const { Content } = await render(projeto);
+const c = papeis(d.paleta);
+const tintaHero = tintaSobre(c.claro);
+const blocos = [
+  { n: '01', t: 'O desafio', c: d.desafio },
+  { n: '02', t: 'O conceito', c: d.conceito },
+  { n: '03', t: 'A solução', c: d.solucao },
+];
+---
+<Base
+  titulo={`${d.titulo} — ${d.conceitual ? 'estudo conceitual' : 'projeto'}`}
+  descricao={d.resumo}
+  classe="pagina-projeto"
+>
+  <article>
+    <!-- ------------------------------------------------- abertura do caso -->
+    <header
+      class="caso-hero papel"
+      style={`--hero-bg:${c.claro};--hero-tinta:${tintaHero};--hero-acento:${c.acento}`}
+    >
+      <div class="env">
+        <nav class="caso-trilha" aria-label="Você está em">
+          <a href="/projetos">Projetos</a>
+          <span aria-hidden="true">/</span>
+          <span>{d.titulo}</span>
+        </nav>
+
+        <div class="caso-topo">
+          <div>
+            <p class="label caso-seg">{String(indice + 1).padStart(2, '0')} — {d.segmento}</p>
+            <h1 class="mega caso-titulo">{d.titulo}</h1>
+            <p class="sub caso-resumo">{d.resumo}</p>
+          </div>
+          {d.conceitual && <CarimboConceitual tamanho={118} cor={c.acento} class="caso-carimbo" />}
+        </div>
+
+        <dl class="caso-ficha">
+          <div><dt class="label">Segmento</dt><dd>{d.segmento}</dd></div>
+          {d.ano && <div><dt class="label">Ano</dt><dd>{d.ano}</dd></div>}
+          <div><dt class="label">Natureza</dt><dd>{d.conceitual ? 'Estudo conceitual' : 'Projeto executado'}</dd></div>
+          {d.entregas.length > 0 && (
+            <div class="caso-ficha-larga">
+              <dt class="label">Entregas</dt>
+              <dd>{d.entregas.join(' · ')}</dd>
+            </div>
+          )}
+        </dl>
+      </div>
+    </header>
+
+    {d.conceitual && (
+      <div class="caso-aviso" data-tema="claro">
+        <div class="env">
+          <Adesivo nome="asterisco" tamanho={16} cor="var(--marca)" />
+          <p>
+            <strong>Estudo conceitual.</strong> Este projeto foi desenvolvido
+            como demonstração de método e direção criativa. Não foi executado
+            para um cliente real e não apresenta resultados de negócio.
+          </p>
+        </div>
+      </div>
+    )}
+
+    <!-- ----------------------------------------------------- a narrativa -->
+    <section class="caso-narrativa capitulo" data-tema="claro">
+      <div class="env caso-blocos">
+        {blocos.map((b) => (
+          <Revelar modo="sobe" class="bloco" como="section">
+            <span class="bloco-n num">{b.n}</span>
+            <h2 class="bloco-t sub">{b.t}</h2>
+            <p class="bloco-c">{b.c}</p>
+          </Revelar>
+        ))}
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------- sistema visual -->
+    <section class="caso-sistema capitulo" data-tema="papel">
+      <div class="env">
+        <Revelar modo="fade" class="sec-cabeca">
+          <span class="label">Sistema visual</span>
+          <span class="label">Cor e tipografia</span>
+        </Revelar>
+
+        <div class="sistema-grade">
+          <Revelar modo="sobe" class="paleta">
+            <h3 class="sub">Paleta</h3>
+            <ul>
+              {d.paleta.map((cor) => (
+                <li>
+                  <span class="paleta-amostra" style={`background:${cor.hex}`}></span>
+                  <span class="paleta-nome">{cor.nome}</span>
+                  <span class="paleta-hex label">{cor.hex.toUpperCase()}</span>
+                </li>
+              ))}
+            </ul>
+          </Revelar>
+
+          {d.tipografia.length > 0 && (
+            <Revelar modo="sobe" atraso={0.08} class="tipo">
+              <h3 class="sub">Tipografia</h3>
+              <ul>
+                {d.tipografia.map((t) => (
+                  <li><strong>{t.nome}</strong><span>{t.papel}</span></li>
+                ))}
+              </ul>
+            </Revelar>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------- aplicacoes -->
+    {d.pecas.length > 0 && (
+      <section class="caso-aplicacoes capitulo" data-tema="claro">
+        <div class="env">
+          <Revelar modo="fade" class="sec-cabeca">
+            <span class="label">Aplicações</span>
+            <span class="label">{d.pecas.length} peças</span>
+          </Revelar>
+          <div class="galeria">
+            {d.pecas.map((tipo, i) => (
+              <Revelar modo="escala" atraso={(i % 3) * 0.06} class={`gal gal--${tipo}`}>
+                <Peca
+                  tipo={tipo} marca={d.marca} cores={c.pecas}
+                  frase={d.frase ?? d.titulo}
+                  rotulo={rotulosPeca[tipo]}
+                  giro={i % 3 === 1 ? -1.2 : i % 3 === 2 ? 1 : 0}
+                />
+              </Revelar>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {d.resultados.length > 0 && (
+      <section class="caso-resultados capitulo" data-tema="vinho">
+        <div class="env">
+          <Revelar modo="fade" class="sec-cabeca">
+            <span class="label">Resultados</span>
+          </Revelar>
+          <ul class="resultados">
+            {d.resultados.map((r) => (
+              <li><span class="res-v num">{r.valor}</span><span class="res-r">{r.rotulo}</span></li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <!-- ------------------------------------------------------ nota final -->
+    <section class="caso-nota capitulo" data-tema="claro">
+      <div class="env">
+        <Revelar modo="sobe" class="nota-corpo">
+          <span class="label">Nota de projeto</span>
+          <div class="prosa"><Content /></div>
+        </Revelar>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------- proximo projeto -->
+    <nav class="caso-proximo capitulo" data-tema="escuro" aria-label="Próximo projeto">
+      <div class="env">
+        <a href={`/projetos/${proximo.id}`} class="prox" data-magnetico="5">
+          <span class="label">Próximo projeto</span>
+          <span class="prox-t">{proximo.data.titulo}</span>
+          <span class="prox-s label">{proximo.data.segmento}</span>
+        </a>
+        <Botao href="/projetos" variante="texto">Todos os projetos</Botao>
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  /* --- abertura ------------------------------------------------------------ */
+  .caso-hero {
+    background: var(--hero-bg); color: var(--hero-tinta);
+    padding-block: clamp(6rem, 14vh, 9rem) clamp(2.5rem, 6vh, 4rem);
+    position: relative; isolation: isolate; overflow: clip;
+  }
+  .caso-trilha {
+    display: flex; gap: .6rem; align-items: baseline;
+    font-family: var(--mono); font-size: var(--t-label);
+    text-transform: uppercase; letter-spacing: var(--track-label);
+    opacity: .6; margin-bottom: clamp(2rem, 5vh, 3.4rem);
+  }
+  .caso-trilha a { text-decoration: none; border-bottom: 1px solid currentColor; }
+  .caso-topo { display: flex; gap: 2rem; align-items: flex-start; justify-content: space-between; }
+  .caso-seg { color: var(--hero-acento); margin-bottom: 1.2rem; }
+  .caso-titulo { margin: 0 0 1.2rem; font-size: clamp(2.8rem, 10vw, 8.5rem); }
+  .caso-resumo { max-width: 30ch; opacity: .82; }
+  .caso-carimbo { flex: none; }
+  @media (max-width: 54rem) { .caso-carimbo { display: none; } }
+
+  .caso-ficha {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1.4rem var(--gutter); margin: clamp(2.5rem, 6vh, 4rem) 0 0;
+    padding-top: 1.6rem; border-top: 1px solid currentColor;
+  }
+  .caso-ficha dt { margin-bottom: .45rem; opacity: .6; }
+  .caso-ficha dd { margin: 0; font-size: var(--t-peq); line-height: 1.5; }
+  .caso-ficha-larga { grid-column: span 2; }
+  @media (max-width: 40rem) { .caso-ficha-larga { grid-column: auto; } }
+
+  /* --- aviso --------------------------------------------------------------- */
+  .caso-aviso { background: var(--creme-fundo); color: var(--preto); padding-block: 1rem; }
+  .caso-aviso .env { display: flex; gap: .8rem; align-items: center; }
+  .caso-aviso p { margin: 0; font-size: var(--t-peq); line-height: 1.55; color: var(--tinta-2); }
+  .caso-aviso strong { color: var(--tinta); font-weight: 600; }
+
+  /* --- narrativa ----------------------------------------------------------- */
+  .caso-blocos { display: grid; gap: clamp(2rem, 5vw, 4rem); grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 62rem) { .caso-blocos { grid-template-columns: 1fr; } }
+  .bloco { display: grid; gap: .8rem; align-content: start; border-top: 1px solid var(--linha); padding-top: 1.4rem; }
+  .bloco-n { font-size: 1.6rem; color: var(--marca); }
+  .bloco-t { margin: 0; font-size: clamp(1.3rem, 2.1vw, 1.7rem); }
+  .bloco-c { margin: 0; font-size: var(--t-peq); line-height: 1.68; color: var(--tinta-2); text-wrap: pretty; }
+
+  /* --- cabeçalhos de seção -------------------------------------------------- */
+  .sec-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(1.6rem, 4vh, 2.6rem); margin-bottom: clamp(1.8rem, 4vh, 3rem);
+    border-bottom: 1px solid var(--linha);
+  }
+
+  /* --- sistema visual ------------------------------------------------------- */
+  .sistema-grade { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); }
+  @media (max-width: 54rem) { .sistema-grade { grid-template-columns: 1fr; } }
+  .paleta h3, .tipo h3 { margin: 0 0 1.4rem; }
+  .paleta ul, .tipo ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .paleta li {
+    display: grid; grid-template-columns: 3rem 1fr auto; gap: 1rem; align-items: center;
+    padding-block: .7rem; border-top: 1px solid var(--linha);
+  }
+  .paleta-amostra { display: block; width: 3rem; height: 2rem; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .08); }
+  .paleta-nome { font-size: var(--t-peq); }
+  .paleta-hex { font-variant-numeric: tabular-nums; }
+  .tipo li { padding-block: .7rem; border-top: 1px solid var(--linha); display: grid; gap: .3rem; }
+  .tipo strong { font-size: var(--t-corpo); font-weight: 600; }
+  .tipo span { font-size: var(--t-peq); color: var(--tinta-2); line-height: 1.55; }
+
+  /* --- galeria de aplicações ------------------------------------------------ */
+  .galeria {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: clamp(1.6rem, 3.5vw, 3rem); align-items: start;
+  }
+  .galeria :global(.gal--papelaria), .galeria :global(.gal--story) { grid-row: span 2; }
+  @media (max-width: 40rem) {
+    .galeria { grid-template-columns: 1fr; }
+    .galeria :global(.gal--papelaria), .galeria :global(.gal--story) { grid-row: auto; }
+  }
+
+  /* --- resultados ----------------------------------------------------------- */
+  .resultados {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--gutter);
+  }
+  .resultados li { display: grid; gap: .5rem; }
+  .res-v { font-size: clamp(2.4rem, 5vw, 4rem); color: var(--acento); }
+  .res-r { font-size: var(--t-peq); color: var(--tinta-2); }
+
+  /* --- nota ----------------------------------------------------------------- */
+  .nota-corpo { max-width: var(--max-texto); }
+  .nota-corpo .label { display: block; margin-bottom: 1rem; }
+  .prosa :global(p) {
+    font-family: var(--serif); font-variation-settings: 'opsz' 48, 'SOFT' 15;
+    font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.45; letter-spacing: -.01em;
+    text-wrap: pretty;
+  }
+  .prosa :global(p + p) { margin-top: 1em; }
+
+  /* --- próximo -------------------------------------------------------------- */
+  .caso-proximo .env { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; flex-wrap: wrap; }
+  .prox { --mx: 0px; --my: 0px; display: grid; gap: .6rem; text-decoration: none; translate: var(--mx) var(--my); transition: translate .3s var(--ease); }
+  .prox-t {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15;
+    font-size: clamp(2rem, 6vw, 4.4rem); font-weight: 500; line-height: 1; letter-spacing: -.025em;
+  }
+  .prox-s { color: var(--tinta-3); }
+  @media (prefers-reduced-motion: reduce) { .prox { transition: none; } }
+</style>

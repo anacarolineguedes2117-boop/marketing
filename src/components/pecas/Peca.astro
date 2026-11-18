@@ -1,0 +1,446 @@
+---
+/**
+ * CAROLIZE — sistema de aplicacoes.
+ *
+ * Uma peca e uma superficie com proporcao real (cartao 85x55, story 9:16,
+ * A4 1:1.414...) desenhada com a paleta recebida. Todas as pecas leem as
+ * mesmas variaveis, entao a mesma composicao funciona com qualquer projeto.
+ *
+ *   --p-bg      fundo
+ *   --p-tinta   texto principal
+ *   --p-acento  cor de destaque
+ *   --p-apoio   cor de apoio
+ */
+import MarcaProjeto from './MarcaProjeto.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+
+import type { TipoPeca, MarcaPeca } from './tipos';
+
+interface Props {
+  tipo: TipoPeca;
+  marca: MarcaPeca;
+  /** [fundo, tinta, acento, apoio] — em hex. */
+  cores: string[];
+  rotulo?: string;
+  giro?: number;
+  class?: string;
+  /** Frase usada nas pecas que mostram conteudo. */
+  frase?: string;
+  style?: string;
+}
+
+const {
+  tipo, marca, cores, rotulo, giro = 0, class: klass = '',
+  frase = 'Toda marca tem uma história. A nossa parte é contá-la bem.',
+  style = '',
+  ...resto
+} = Astro.props;
+
+const [bg = '#fff', tinta = '#111', acento = '#888', apoio = '#ddd'] = cores;
+const vars =
+  `--p-bg:${bg};--p-tinta:${tinta};--p-acento:${acento};--p-apoio:${apoio};`;
+
+const m = {
+  familia: 'serif' as const, peso: 500, tracking: 0.02, caixaAlta: true, ...marca,
+};
+/** Nas pecas densas a assinatura ocuparia mais espaco que a propria marca. */
+const mCurta = { ...m, assinatura: undefined };
+const inicial = m.texto.trim()[0] ?? 'C';
+---
+
+<figure class:list={['peca', `peca--${tipo}`, klass]} style={`${vars}${giro ? `rotate:${giro}deg;` : ''}${style}`} {...resto}>
+  <div class="peca-superficie">
+
+    {tipo === 'cartao' && (
+      <div class="s cartao">
+        <MarcaProjeto {...m} tamanho="1.05rem" class="cartao-marca" />
+        <span class="cartao-regra"></span>
+        <span class="cartao-info">contato · endereço · @perfil</span>
+      </div>
+    )}
+
+    {tipo === 'cartaoVerso' && (
+      <div class="s cartao-verso">
+        <span class="cv-inicial">{inicial}</span>
+      </div>
+    )}
+
+    {tipo === 'papelaria' && (
+      <div class="s papel">
+        <header class="papel-topo">
+          <MarcaProjeto {...mCurta} tamanho=".72rem" />
+          <span class="papel-data">—</span>
+        </header>
+        <div class="papel-corpo">
+          {[94, 100, 88, 97, 72, 0, 100, 91, 96, 64].map((w) => (
+            <span class="papel-linha" style={`width:${w}%`}></span>
+          ))}
+        </div>
+        <footer class="papel-base"><span></span></footer>
+      </div>
+    )}
+
+    {tipo === 'post' && (
+      <div class="s post">
+        <span class="post-label">01 — manifesto</span>
+        <p class="post-frase">{frase}</p>
+        <div class="post-rodape">
+          <MarcaProjeto {...m} tamanho=".62rem" />
+          <Adesivo nome="estrela" tamanho={14} cor="var(--p-acento)" />
+        </div>
+        <span class="post-forma" aria-hidden="true"></span>
+      </div>
+    )}
+
+    {tipo === 'carrossel' && (
+      <div class="s carrossel">
+        {[0, 1, 2].map((i) => (
+          <div class="car-slide" style={`--i:${i}`}>
+            {i === 0 && <p class="car-t">{frase}</p>}
+            {i === 1 && <span class="car-n">02</span>}
+            {i === 2 && <MarcaProjeto {...mCurta} tamanho=".66rem" />}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {tipo === 'story' && (
+      <div class="s story">
+        <div class="story-barras">{[0, 1, 2].map((i) => <span style={`--i:${i}`}></span>)}</div>
+        <span class="story-label">novidade</span>
+        <div class="story-meio"><p class="story-frase">{frase}</p></div>
+        <div class="story-cta"><span>arraste para cima</span></div>
+        <span class="story-forma" aria-hidden="true"></span>
+      </div>
+    )}
+
+    {tipo === 'etiqueta' && (
+      <div class="s etiq">
+        <span class="etiq-furo"></span>
+        <MarcaProjeto {...m} tamanho=".82rem" />
+        <span class="etiq-cod">nº 001</span>
+      </div>
+    )}
+
+    {tipo === 'embalagem' && (
+      <div class="s emb">
+        <span class="emb-aba"></span>
+        <div class="emb-cinta">
+          <MarcaProjeto {...m} tamanho="6.4cqw" />
+        </div>
+        <span class="emb-selo">{inicial}</span>
+      </div>
+    )}
+
+    {tipo === 'catalogo' && (
+      <div class="s cat">
+        <div class="cat-pag cat-pag--esq">
+          <span class="cat-n">04</span>
+          <div class="cat-img"></div>
+        </div>
+        <div class="cat-pag cat-pag--dir">
+          <MarcaProjeto {...mCurta} tamanho=".58rem" />
+          <div class="cat-texto">
+            {[100, 92, 97, 85, 0, 96, 78].map((w) => (
+              <span style={`width:${w}%`}></span>
+            ))}
+          </div>
+          <span class="cat-preco">—</span>
+        </div>
+      </div>
+    )}
+
+    {tipo === 'tela' && (
+      <div class="s tela">
+        <div class="tela-barra"><i></i><i></i><i></i></div>
+        <div class="tela-conteudo">
+          <MarcaProjeto {...mCurta} tamanho=".6rem" class="tela-marca" />
+          <p class="tela-h">{frase}</p>
+          <div class="tela-grade">{[0, 1, 2].map(() => <span></span>)}</div>
+        </div>
+      </div>
+    )}
+
+    {tipo === 'selo' && (
+      <div class="s selo-peca">
+        <span class="sp-anel"></span>
+        <span class="sp-inicial">{inicial}</span>
+        <span class="sp-txt">desde</span>
+      </div>
+    )}
+
+    {tipo === 'destaques' && (
+      <div class="s destaques">
+        {['A', 'B', 'C', 'D'].map((l, i) => (
+          <span class="dq" style={`--i:${i}`}>{l}</span>
+        ))}
+      </div>
+    )}
+
+    {tipo === 'assinaturaEmail' && (
+      <div class="s assin">
+        <div class="assin-esq"><span class="assin-inicial">{inicial}</span></div>
+        <div class="assin-dir">
+          <MarcaProjeto {...mCurta} tamanho=".66rem" />
+          <span class="assin-linha"></span>
+          <span class="assin-dados">contato · telefone · site</span>
+        </div>
+      </div>
+    )}
+
+  </div>
+  {rotulo && <figcaption class="peca-rotulo label">{rotulo}</figcaption>}
+</figure>
+
+<style>
+  .peca { margin: 0; display: grid; gap: .8rem; }
+  .peca-superficie {
+    position: relative;
+    background: var(--p-bg);
+    color: var(--p-tinta);
+    box-shadow: var(--sombra-papel);
+    overflow: clip;
+    container-type: inline-size;
+    transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+  }
+  .peca:hover .peca-superficie {
+    transform: translateY(-5px);
+    box-shadow: 0 2px 4px rgb(36 36 36 / .06), 0 24px 46px -18px rgb(36 36 36 / .3);
+  }
+  .peca-rotulo { color: var(--tinta-3); }
+  /* a superficie e um container de consulta: dentro dela todas as medidas
+     usam cqw (largura da peca), nunca porcentagem — gap percentual colapsa
+     para zero quando a altura vem de aspect-ratio */
+  .s { position: absolute; inset: 0; width: 100%; height: 100%; display: flex; }
+
+  /* --- cartao de visita · 85x55mm ---------------------------------------- */
+  .peca--cartao .peca-superficie,
+  .peca--cartaoVerso .peca-superficie { aspect-ratio: 85 / 55; }
+  .cartao { flex-direction: column; justify-content: space-between; padding: 9cqw; }
+  .cartao-marca { justify-items: start; }
+  .cartao-regra { display: block; height: 1px; background: var(--p-acento); width: 32%; }
+  .cartao-info {
+    font-family: var(--mono); font-size: 4.2cqw; letter-spacing: .1em;
+    text-transform: uppercase; opacity: .55;
+  }
+  .cartao-verso { background: var(--p-acento); align-items: center; justify-content: center; }
+  .cv-inicial {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 12;
+    font-size: 46cqw; line-height: 1; font-weight: 400;
+    color: var(--p-bg); opacity: .92;
+  }
+
+  /* --- papelaria · A4 ----------------------------------------------------- */
+  .peca--papelaria .peca-superficie { aspect-ratio: 1 / 1.414; }
+  .papel { flex-direction: column; padding: 9cqw 9cqw 7cqw; gap: 5cqw; }
+  .papel-topo {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 4%; border-bottom: 1px solid var(--p-acento);
+  }
+  .papel-data { font-family: var(--mono); font-size: 2.6cqw; opacity: .5; }
+  .papel-corpo { display: grid; gap: 2.4cqw; align-content: start; flex: 1; }
+  .papel-linha { display: block; height: 1.5cqw; background: var(--p-tinta); opacity: .14; }
+  .papel-base { border-top: 1px solid var(--p-apoio); padding-top: 3%; }
+  .papel-base span { display: block; height: 1.4cqw; width: 40%; background: var(--p-acento); opacity: .5; }
+
+  /* --- post 1:1 ----------------------------------------------------------- */
+  .peca--post .peca-superficie { aspect-ratio: 1; }
+  .post { flex-direction: column; justify-content: space-between; padding: 9cqw; position: relative; }
+  .post-label {
+    font-family: var(--mono); font-size: 3.1cqw; text-transform: uppercase;
+    letter-spacing: .2em; color: var(--p-acento); position: relative; z-index: 2;
+  }
+  .post-frase {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 12;
+    font-size: 9.4cqw; line-height: 1.08; font-weight: 400;
+    letter-spacing: -.02em; margin: 0; position: relative; z-index: 2;
+    text-wrap: balance;
+    /* a peca tem medida fixa: o texto para antes de invadir a assinatura */
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4;
+    line-clamp: 4; overflow: hidden;
+  }
+  .post-rodape {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    position: relative; z-index: 2;
+  }
+  .post-forma {
+    position: absolute; right: -14%; top: -10%;
+    width: 52%; aspect-ratio: 1; border-radius: 50%;
+    background: var(--p-acento); opacity: .17;
+  }
+
+  /* --- carrossel ---------------------------------------------------------- */
+  .peca--carrossel .peca-superficie { aspect-ratio: 1.56; background: none; box-shadow: none; }
+  .carrossel { position: absolute; inset: 0; display: flex; gap: 3cqw; align-items: stretch; }
+  .car-slide {
+    flex: 1; min-width: 0; aspect-ratio: 1;
+    background: var(--p-bg); color: var(--p-tinta);
+    box-shadow: var(--sombra-adesivo);
+    padding: 3.4cqw; display: flex; align-items: flex-end;
+    transition: translate .45s var(--ease);
+  }
+  .car-slide:nth-child(2) { background: var(--p-acento); color: var(--p-bg); align-items: center; justify-content: center; }
+  .car-slide:nth-child(3) { background: var(--p-tinta); color: var(--p-bg); align-items: flex-end; }
+  .peca:hover .car-slide { translate: 0 calc(var(--i) * -1.4cqw); }
+  .car-t {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144;
+    font-size: 3.1cqw; line-height: 1.18; margin: 0; font-weight: 400;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6;
+    line-clamp: 6; overflow: hidden;
+  }
+  .car-n {
+    font-family: var(--serif); font-size: 9cqw; line-height: .8; font-weight: 300;
+  }
+
+  /* --- story 9:16 --------------------------------------------------------- */
+  .peca--story .peca-superficie { aspect-ratio: 9 / 16; }
+  .story { flex-direction: column; padding: 8cqw 8cqw 10cqw; gap: 3.4cqw; position: relative; }
+  .story-barras { display: flex; gap: 2.2cqw; }
+  .story-barras span {
+    flex: 1; height: 1.1cqw; background: var(--p-tinta); opacity: .22; border-radius: 2px;
+  }
+  .story-barras span:first-child { opacity: .8; background: var(--p-acento); }
+  .story-label {
+    font-family: var(--mono); font-size: 3.6cqw; text-transform: uppercase;
+    letter-spacing: .22em; color: var(--p-acento); position: relative; z-index: 2;
+  }
+  .story-meio { flex: 1; position: relative; z-index: 2; display: flex; align-items: flex-start; }
+  .story-frase {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 12;
+    font-size: 10.4cqw; line-height: 1.08; letter-spacing: -.02em;
+    margin: 0; font-weight: 400;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 7;
+    line-clamp: 7; overflow: hidden;
+  }
+  .story-cta { display: grid; justify-items: center; gap: 2cqw; position: relative; z-index: 2; }
+  .story-cta span {
+    font-family: var(--mono); font-size: 3.2cqw; text-transform: uppercase;
+    letter-spacing: .2em; opacity: .6;
+  }
+  .story-forma {
+    position: absolute; left: -22%; bottom: 8%;
+    width: 70%; aspect-ratio: 1; border-radius: 50%;
+    background: var(--p-acento); opacity: .14;
+  }
+
+  /* --- etiqueta ----------------------------------------------------------- */
+  .peca--etiqueta .peca-superficie {
+    aspect-ratio: 5 / 3;
+    clip-path: polygon(0 50%, 16% 0, 100% 0, 100% 100%, 16% 100%);
+  }
+  .etiq {
+    flex-direction: column; justify-content: space-between;
+    padding: 11cqw 9cqw 11cqw 22cqw;
+  }
+  .etiq-furo {
+    position: absolute; left: 13%; top: 50%; translate: 0 -50%;
+    width: 7%; aspect-ratio: 1; border-radius: 50%;
+    background: var(--p-apoio); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .14);
+  }
+  .etiq-cod {
+    font-family: var(--mono); font-size: 4cqw; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--p-acento);
+  }
+
+  /* --- embalagem ---------------------------------------------------------- */
+  .peca--embalagem .peca-superficie { aspect-ratio: 4 / 5; background: var(--p-apoio); }
+  .emb { flex-direction: column; align-items: center; justify-content: center; }
+  .emb-aba {
+    position: absolute; inset: 0 0 auto 0; height: 17%;
+    background: var(--p-acento);
+    clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%);
+  }
+  .emb-cinta {
+    position: absolute; inset: 38% 0 auto 0; min-height: 22%;
+    background: var(--p-tinta); color: var(--p-bg);
+    display: grid; place-items: center; padding: 4cqw;
+    text-align: center;
+  }
+  .emb-selo {
+    position: absolute; left: 50%; bottom: 11%; translate: -50% 0;
+    width: 17%; aspect-ratio: 1; border-radius: 50%;
+    border: 1px solid var(--p-tinta);
+    display: grid; place-items: center;
+    font-family: var(--serif); font-size: 8cqw; color: var(--p-tinta);
+    opacity: .72;
+  }
+
+  /* --- catalogo (pagina dupla) -------------------------------------------- */
+  .peca--catalogo .peca-superficie { aspect-ratio: 1.62; }
+  .cat { display: grid; grid-template-columns: 1fr 1fr; }
+  .cat-pag { padding: 7cqw; display: flex; flex-direction: column; gap: 4cqw; }
+  .cat-pag--esq { background: var(--p-acento); color: var(--p-bg); }
+  .cat-n { font-family: var(--serif); font-size: 13cqw; line-height: .8; font-weight: 300; }
+  .cat-img { flex: 1; background: var(--p-bg); opacity: .22; }
+  .cat-texto { display: grid; gap: 1.8cqw; flex: 1; align-content: start; margin-top: 4%; }
+  .cat-texto span { display: block; height: 1.1cqw; background: var(--p-tinta); opacity: .15; }
+  .cat-preco { font-family: var(--mono); font-size: 3cqw; color: var(--p-acento); letter-spacing: .14em; }
+
+  /* --- tela / mini site ---------------------------------------------------- */
+  .peca--tela .peca-superficie { aspect-ratio: 16 / 10; }
+  .tela { flex-direction: column; }
+  .tela-barra {
+    height: 9%; min-height: 14px; background: var(--p-apoio);
+    display: flex; align-items: center; gap: 1.4cqw; padding-inline: 2.6%;
+  }
+  .tela-barra i { width: 1.5cqw; aspect-ratio: 1; border-radius: 50%; background: var(--p-tinta); opacity: .28; }
+  .tela-conteudo { flex: 1; padding: 5.5cqw; display: flex; flex-direction: column; gap: 3cqw; }
+  .tela-h {
+    font-family: var(--serif); font-variation-settings: 'opsz' 144;
+    font-size: 5.6cqw; line-height: 1.12; margin: 0; flex: 1; font-weight: 400;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+    line-clamp: 3; overflow: hidden;
+  }
+  .tela-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.6%; height: 26%; }
+  .tela-grade span { background: var(--p-acento); opacity: .22; }
+  .tela-grade span:first-child { opacity: .55; }
+
+  /* --- selo ---------------------------------------------------------------- */
+  .peca--selo .peca-superficie { aspect-ratio: 1; background: var(--p-acento); }
+  .selo-peca { align-items: center; justify-content: center; color: var(--p-bg); }
+  .sp-anel {
+    position: absolute; inset: 11%; border: 1px solid currentColor;
+    border-radius: 50%; opacity: .5;
+  }
+  .sp-inicial {
+    font-family: var(--serif); font-size: 42cqw; line-height: 1; font-weight: 400;
+  }
+  .sp-txt {
+    position: absolute; bottom: 17%; font-family: var(--mono);
+    font-size: 4.4cqw; letter-spacing: .3em; text-transform: uppercase; opacity: .7;
+  }
+
+  /* --- capas de destaque ---------------------------------------------------- */
+  .peca--destaques .peca-superficie { aspect-ratio: 4 / 1; background: none; box-shadow: none; }
+  .destaques { align-items: center; justify-content: space-between; gap: 4cqw; }
+  .dq {
+    flex: 1; aspect-ratio: 1; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--serif); font-size: 9cqw; font-weight: 400;
+    background: var(--p-bg); color: var(--p-tinta);
+    box-shadow: var(--sombra-adesivo);
+  }
+  .dq:nth-child(2) { background: var(--p-acento); color: var(--p-bg); }
+  .dq:nth-child(3) { background: var(--p-tinta); color: var(--p-bg); }
+  .dq:nth-child(4) { background: var(--p-apoio); }
+
+  /* --- assinatura de e-mail -------------------------------------------------- */
+  .peca--assinaturaEmail .peca-superficie { aspect-ratio: 3 / 1; }
+  .assin { align-items: center; gap: 5cqw; padding: 7cqw; }
+  .assin-esq {
+    width: 20%; aspect-ratio: 1; background: var(--p-acento);
+    display: grid; place-items: center; flex: none;
+  }
+  .assin-inicial { font-family: var(--serif); font-size: 11cqw; color: var(--p-bg); }
+  .assin-dir { display: grid; gap: 3.4%; }
+  .assin-linha { display: block; height: 1px; background: var(--p-acento); width: 60%; }
+  .assin-dados {
+    font-family: var(--mono); font-size: 3cqw; letter-spacing: .1em;
+    text-transform: uppercase; opacity: .55;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .peca-superficie, .car-slide { transition: none; }
+    .peca:hover .peca-superficie { transform: none; }
+  }
+</style>

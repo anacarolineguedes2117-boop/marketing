@@ -1,0 +1,42 @@
+---
+/** Assinatura tipografica de um projeto, dentro das pecas de aplicacao. */
+interface Props {
+  texto: string;
+  familia?: 'serif' | 'sans';
+  peso?: number;
+  tracking?: number;
+  caixaAlta?: boolean;
+  tamanho?: string;
+  class?: string;
+  assinatura?: string;
+  tamAssinatura?: string;
+}
+const {
+  texto, familia = 'serif', peso = 500, tracking = 0.02, caixaAlta = true,
+  tamanho = '1rem', class: klass = '', assinatura, tamAssinatura = '.3em',
+  ...resto
+} = Astro.props;
+---
+<span class:list={['mp', klass]} {...resto}>
+  <span
+    class="mp-nome"
+    style={`font-family:var(--${familia === 'serif' ? 'serif' : 'sans'});
+            font-weight:${peso};
+            font-variation-settings:${familia === 'serif' ? `'opsz' 144,'SOFT' 12,'WONK' 0` : `'wdth' 100`};
+            letter-spacing:${tracking}em;
+            text-transform:${caixaAlta ? 'uppercase' : 'none'};
+            font-size:${tamanho}`}
+  >{texto}</span>
+  {assinatura && (
+    <span class="mp-ass" style={`font-size:calc(${tamanho} * ${tamAssinatura})`}>{assinatura}</span>
+  )}
+</span>
+<style>
+  .mp { display: inline-grid; gap: .5em; justify-items: inherit; max-width: 100%; }
+  .mp-nome { display: block; line-height: 1; white-space: nowrap; }
+  .mp-ass {
+    display: block; font-family: var(--mono); line-height: 1.35;
+    text-transform: uppercase; letter-spacing: .13em; opacity: .55;
+    max-width: 22ch;
+  }
+</style>

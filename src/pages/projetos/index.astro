@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import CartaoProjeto from '~/components/pecas/CartaoProjeto.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+
+const projetos = (await getCollection('projetos', (p) => p.data.publicado))
+  .sort((a, b) => a.data.ordem - b.data.ordem);
+const conceituais = projetos.filter((p) => p.data.conceitual).length;
+---
+<Base
+  titulo="Projetos"
+  descricao="Estudos de caso e projetos de identidade visual, branding e comunicação da CAROLIZE."
+>
+  <section class="lista-hero papel" data-tema="claro">
+    <div class="env">
+      <span class="label">Portfólio</span>
+      <TextoRevelado como="h1" class="display lh-h" texto="Projetos" />
+      <p class="lede lh-l">
+        Cada trabalho é apresentado como estudo de caso: o problema, o conceito
+        que resolveu e as aplicações que saíram dele.
+      </p>
+      <Adesivo nome="estrela" tamanho={28} cor="var(--marca)" class="lh-ad" giro={-10} />
+    </div>
+  </section>
+
+  {conceituais > 0 && (
+    <div class="lista-aviso" data-tema="claro">
+      <div class="env">
+        <p>
+          <strong>{conceituais} {conceituais === 1 ? 'estudo conceitual' : 'estudos conceituais'}.</strong>
+          Projetos marcados com o carimbo de estudo foram desenvolvidos para
+          demonstrar método e repertório — não foram executados para clientes.
+        </p>
+      </div>
+    </div>
+  )}
+
+  <section class="lista capitulo" data-tema="claro">
+    <div class="env">
+      {projetos.length > 0 ? (
+        <div class="lista-itens">
+          {projetos.map((p, i) => <CartaoProjeto projeto={p} indice={i} />)}
+        </div>
+      ) : (
+        <p class="lede">Nenhum projeto publicado ainda.</p>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lista-hero { padding-block: clamp(7rem, 16vh, 11rem) clamp(3rem, 7vh, 5rem); position: relative; overflow: clip; }
+  .lh-h { margin: 1rem 0 1.4rem; }
+  .lh-l { max-width: 40ch; }
+  .lista-hero :global(.lh-ad) { position: absolute; top: 34%; right: 6%; }
+  .lista-aviso { background: var(--creme-fundo); padding-block: .95rem; }
+  .lista-aviso p { margin: 0; font-size: var(--t-peq); line-height: 1.6; color: var(--tinta-2); max-width: 72ch; }
+  .lista-aviso strong { color: var(--tinta); font-weight: 600; }
+  .lista { padding-top: clamp(1rem, 3vh, 2rem); }
+</style>

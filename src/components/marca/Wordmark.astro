@@ -25,6 +25,7 @@ const {
   animar = false, assinatura = false, fragmento = false,
   cor = 'currentColor', acento = 'var(--marca)',
   class: klass = '', titulo = 'CAROLIZE', comoTitulo = false,
+  ...resto
 } = Astro.props;
 
 const { wordmark: w, signature: s } = brand;
@@ -43,6 +44,7 @@ const ordem = ['C', 'A', 'R', 'L', 'I', 'Z', 'E'];
   aria-label={comoTitulo ? undefined : titulo}
   aria-hidden={comoTitulo ? 'true' : undefined}
   focusable="false"
+  {...resto}
 >
   {!comoTitulo && <title>{titulo}</title>}
 
@@ -52,13 +54,13 @@ const ordem = ['C', 'A', 'R', 'L', 'I', 'Z', 'E'];
     ))}
   </g>
 
-  <g
-    class="wm-anel"
-    style={`--cx:${anel.cx}px; --cy:${anel.cy}px`}
-    transform={`translate(${anel.cx} ${anel.cy}) scale(${anel.s})`}
-  >
-    <path class="wm-anel-forma" d={anel.d} fill={cor} />
-    {fragmento && <path class="wm-frag" d={anel.frag} fill={acento} />}
+  {/* O transform estatico fica no grupo externo. As propriedades animadas
+      (rotate/scale) ficam no interno, com transform-box: fill-box — aplicar
+      as duas coisas no mesmo elemento faria a transform-origin deslocar
+      tambem a translacao do atributo transform. */}
+  <g transform={`translate(${anel.cx} ${anel.cy}) scale(${anel.s})`}>
+    <g class="wm-anel"><path d={anel.d} fill={cor} /></g>
+    {fragmento && <g class="wm-frag"><path d={anel.frag} fill={acento} /></g>}
   </g>
 
   {assinatura && (
@@ -92,7 +94,8 @@ const ordem = ['C', 'A', 'R', 'L', 'I', 'Z', 'E'];
   .animar .wm-anel {
     animation: abre .9s var(--ease-suave) both;
     animation-delay: .34s;
-    transform-origin: var(--cx) var(--cy);
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
   }
   .animar .wm-frag {
     animation: solta .7s var(--ease-suave) both;

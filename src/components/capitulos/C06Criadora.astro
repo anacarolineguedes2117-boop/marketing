@@ -1,0 +1,108 @@
+---
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import Selo from '~/components/marca/Selo.astro';
+import { site } from '~/data/site';
+
+/** Coloque a foto em /public/criadora.jpg e troque o caminho abaixo. */
+const foto: string | null = null;
+const fotoAlt = 'Carol Guedes';
+---
+<section class="criadora capitulo" id="criadora" data-capitulo="criadora" data-tema="rosa">
+  <div class="env">
+    <Revelar modo="fade" class="cr-cabeca">
+      <span class="label">Capítulo 06</span>
+      <span class="label">Sobre a criadora</span>
+    </Revelar>
+
+    <div class="cr-grade">
+      <Revelar modo="escala" class="cr-retrato" como="figure">
+        {foto ? (
+          <img src={foto} alt={fotoAlt} width="900" height="1200" loading="lazy" decoding="async" />
+        ) : (
+          <div class="cr-vazio">
+            <Adesivo nome="moldura" tamanho="78%" cor="var(--acento)" class="cr-moldura" />
+            <Selo tamanho={104} cor="var(--acento)" acento="var(--vinho)" />
+            <span class="label cr-vazio-t">Retrato em breve</span>
+          </div>
+        )}
+        <figcaption class="label">{site.autora} — fundadora</figcaption>
+      </Revelar>
+
+      <div class="cr-texto">
+        <TextoRevelado
+          como="h2" class="titulo cr-h"
+          texto="Por trás da Carolize está Carol Guedes."
+        />
+        <Revelar modo="sobe" atraso={0.08} class="cr-paras">
+          <p class="corpo">
+            Apaixonada por comunicação, criatividade e pelas possibilidades que
+            existem quando estratégia e identidade caminham juntas.
+          </p>
+          <blockquote class="cr-citacao">
+            <p>
+              Acredito que uma boa comunicação vai além da estética: ela precisa
+              ter intenção, coerência e personalidade.
+            </p>
+            <footer class="label">— {site.autora}</footer>
+          </blockquote>
+        </Revelar>
+
+        <Revelar modo="sobe" atraso={0.14} class="cr-nota">
+          <Adesivo nome="estrela" tamanho={16} cor="var(--acento)" />
+          <p>
+            Esta seção está reservada para apresentação pessoal. Formação,
+            trajetória e certificações podem ser acrescentadas quando você quiser —
+            nada foi preenchido por suposição.
+          </p>
+        </Revelar>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cr-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem); border-bottom: 1px solid var(--linha);
+  }
+  .cr-grade {
+    display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    padding-block: clamp(3rem, 8vh, 5.5rem) clamp(1rem, 3vh, 2rem);
+    align-items: start;
+  }
+  @media (max-width: 58rem) { .cr-grade { grid-template-columns: 1fr; } }
+
+  .cr-retrato { margin: 0; display: grid; gap: 1rem; }
+  .cr-retrato img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; box-shadow: var(--sombra-papel); }
+  .cr-retrato figcaption { color: var(--tinta-3); }
+  .cr-vazio {
+    position: relative; aspect-ratio: 3 / 4;
+    display: grid; place-items: center; gap: 1.2rem;
+    background: color-mix(in oklab, var(--creme) 70%, var(--rosa-claro));
+    box-shadow: var(--sombra-papel);
+  }
+  .cr-vazio :global(.cr-moldura) { position: absolute; inset: 11%; width: 78%; height: auto; opacity: .4; }
+  .cr-vazio-t { color: var(--acento); }
+
+  .cr-h { max-width: 15ch; margin-bottom: clamp(1.4rem, 3.5vh, 2.2rem); }
+  .cr-paras { max-width: 46ch; }
+  .cr-citacao {
+    margin: 1.8rem 0 0; padding-left: 1.3rem;
+    border-left: 2px solid var(--acento);
+  }
+  .cr-citacao p {
+    font-family: var(--serif); font-variation-settings: 'opsz' 48, 'SOFT' 30;
+    font-size: clamp(1.2rem, 2.1vw, 1.6rem); line-height: 1.34;
+    letter-spacing: -.012em; margin: 0 0 .7rem;
+  }
+  .cr-citacao footer { color: var(--tinta-3); }
+  .cr-nota {
+    display: flex; gap: .8rem; align-items: start;
+    margin-top: clamp(2rem, 5vh, 3rem); padding-top: 1.4rem;
+    border-top: 1px solid var(--linha); max-width: 50ch;
+  }
+  .cr-nota p { margin: 0; font-size: var(--t-label); line-height: 1.7; color: var(--tinta-3); }
+</style>

@@ -1,0 +1,41 @@
+---
+/** Carimbo que identifica estudos demonstrativos. Nunca deve ser removido
+ *  de um projeto que nao foi executado para um cliente real. */
+interface Props { tamanho?: number; giro?: number; class?: string; cor?: string }
+const { tamanho = 92, giro = -11, class: klass = '', cor = 'var(--vinho)', ...resto } = Astro.props;
+const id = `cc-${Math.random().toString(36).slice(2, 7)}`;
+---
+<span
+  class:list={['carimbo', klass]}
+  style={`--t:${tamanho}px;--c:${cor};rotate:${giro}deg`}
+  role="img" aria-label="Projeto conceitual — estudo demonstrativo, não executado para cliente"
+  {...resto}
+>
+  <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <defs><path id={id} d="M50,9 a41,41 0 1,1 -0.01,0" /></defs>
+    <circle cx="50" cy="50" r="46.5" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".75" />
+    <circle cx="50" cy="50" r="33" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".75" />
+    <text fill="currentColor">
+      <textPath href={`#${id}`} startOffset="0%">
+        PROJETO CONCEITUAL · ESTUDO DEMONSTRATIVO ·
+      </textPath>
+    </text>
+  </svg>
+  <span class="carimbo-centro" aria-hidden="true">estudo</span>
+</span>
+<style>
+  .carimbo {
+    position: relative; display: grid; place-items: center;
+    width: var(--t); height: var(--t); color: var(--c);
+    flex: none;
+  }
+  .carimbo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .carimbo text {
+    font-family: var(--mono); font-size: 6.4px; letter-spacing: .105em;
+    font-weight: 500;
+  }
+  .carimbo-centro {
+    font-family: var(--mono); font-size: calc(var(--t) * .088);
+    text-transform: uppercase; letter-spacing: .16em;
+  }
+</style>

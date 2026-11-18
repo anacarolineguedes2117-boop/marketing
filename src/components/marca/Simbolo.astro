@@ -18,6 +18,7 @@ interface Props {
 const {
   tamanho = 64, cor = 'currentColor', acento = 'var(--marca)',
   fragmento = true, girar = false, class: klass = '', rotulo,
+  ...resto
 } = Astro.props;
 const t = typeof tamanho === 'number' ? `${tamanho}px` : tamanho;
 const { symbol } = brand;
@@ -30,6 +31,7 @@ const { symbol } = brand;
   aria-label={rotulo}
   aria-hidden={rotulo ? undefined : 'true'}
   focusable="false"
+  {...resto}
 >
   {rotulo && <title>{rotulo}</title>}
   <path d={symbol.ring} fill={cor} />

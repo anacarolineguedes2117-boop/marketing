@@ -51,9 +51,12 @@ import { capitulos } from '~/data/capitulos';
     transition: max-width .44s var(--ease), opacity .3s var(--ease);
     opacity: 0;
   }
+  /* o titulo so se abre quando o indice recebe atencao — fechado ele ocupa
+     menos de 2rem e nunca invade a coluna de texto */
+  .indice:hover .indice-link[data-ativo] .indice-t,
+  .indice:focus-within .indice-link[data-ativo] .indice-t,
   .indice-link:hover .indice-t,
-  .indice-link:focus-visible .indice-t,
-  .indice-link[data-ativo] .indice-t { max-width: 9rem; opacity: 1; }
+  .indice-link:focus-visible .indice-t { max-width: 9rem; opacity: 1; }
   .indice-n { font-variant-numeric: tabular-nums; }
 
   @media (max-width: 64rem) {

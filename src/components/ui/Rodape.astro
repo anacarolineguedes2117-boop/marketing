@@ -1,0 +1,126 @@
+---
+import Wordmark from '~/components/marca/Wordmark.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import { site, redesAtivas, contato } from '~/data/site';
+import { capitulos } from '~/data/capitulos';
+
+const redes = redesAtivas();
+const ano = new Date().getFullYear();
+---
+<footer class="rodape" data-tema="escuro">
+  <div class="env">
+    <div class="rodape-topo">
+      <a href="#abertura" class="rodape-voltar" data-magnetico="6">
+        <Adesivo nome="seta" tamanho={30} giro={-45} cor="var(--marca)" />
+        <span>Voltar ao início</span>
+      </a>
+      <p class="label">{site.assinatura}</p>
+    </div>
+
+    <Wordmark class="rodape-marca" fragmento cor="var(--creme)" acento="var(--rosa)" />
+
+    <div class="rodape-grade">
+      <nav class="rodape-col" aria-label="Capítulos">
+        <p class="label">Capítulos</p>
+        <ul>
+          {capitulos.map((c) => (
+            <li><a href={`/#${c.id}`}>{c.n} — {c.titulo}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav class="rodape-col" aria-label="Páginas">
+        <p class="label">Páginas</p>
+        <ul>
+          <li><a href="/projetos">Projetos</a></li>
+          <li><a href="/marca">Manual da marca</a></li>
+        </ul>
+      </nav>
+
+      <div class="rodape-col">
+        <p class="label">Contato</p>
+        {redes.length > 0 ? (
+          <ul>
+            {redes.map((r) => (
+              <li>
+                <a href={r.url} target="_blank" rel="noopener noreferrer">
+                  {r.nome}{r.rotulo && <span class="rodape-det"> · {r.rotulo}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="rodape-pendente">
+            Canais de contato ainda não configurados.<br />
+            <code>src/data/site.ts</code>
+          </p>
+        )}
+      </div>
+    </div>
+
+    <div class="rodape-base">
+      <p>© {ano} {site.nome}{contato.local && ` · ${contato.local}`}</p>
+      <p>Identidade visual e site desenvolvidos sob medida.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    background: var(--preto); color: var(--creme);
+    padding-block: clamp(3.5rem, 8vh, 6rem) 2rem;
+    overflow: clip;
+  }
+  .rodape-topo {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; flex-wrap: wrap;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem);
+  }
+  .rodape-voltar {
+    --mx: 0px; --my: 0px;
+    display: inline-flex; align-items: center; gap: .8rem;
+    text-decoration: none; font-family: var(--mono);
+    font-size: var(--t-label); text-transform: uppercase;
+    letter-spacing: var(--track-label);
+    translate: var(--mx) var(--my);
+    transition: translate .3s var(--ease);
+  }
+  .rodape-topo .label { color: color-mix(in oklab, var(--creme) 46%, var(--preto)); }
+
+  .rodape-marca { width: 100%; margin-bottom: clamp(2.5rem, 6vh, 4.5rem); }
+
+  .rodape-grade {
+    display: grid; gap: var(--gutter);
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    padding-block: clamp(2rem, 5vh, 3rem);
+    border-top: 1px solid color-mix(in oklab, var(--creme) 16%, transparent);
+  }
+  .rodape-col .label { margin-bottom: 1.1rem; color: color-mix(in oklab, var(--creme) 42%, var(--preto)); }
+  .rodape-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .48rem; }
+  .rodape-col a {
+    text-decoration: none; font-size: var(--t-peq);
+    color: color-mix(in oklab, var(--creme) 82%, var(--preto));
+    transition: color .3s var(--ease);
+  }
+  .rodape-col a:hover, .rodape-col a:focus-visible { color: var(--rosa); }
+  .rodape-det { opacity: .5; }
+  .rodape-pendente {
+    font-size: var(--t-peq);
+    color: color-mix(in oklab, var(--creme) 52%, var(--preto));
+    line-height: 1.7;
+  }
+  .rodape-pendente code {
+    font-family: var(--mono); font-size: .9em;
+    background: color-mix(in oklab, var(--creme) 10%, transparent);
+    padding: .1em .4em;
+  }
+
+  .rodape-base {
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    padding-top: 1.8rem;
+    border-top: 1px solid color-mix(in oklab, var(--creme) 16%, transparent);
+    font-family: var(--mono); font-size: var(--t-label);
+    text-transform: uppercase; letter-spacing: var(--track-label);
+    color: color-mix(in oklab, var(--creme) 42%, var(--preto));
+  }
+</style>

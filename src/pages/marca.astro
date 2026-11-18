@@ -1,0 +1,389 @@
+---
+import Base from '~/layouts/Base.astro';
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Wordmark from '~/components/marca/Wordmark.astro';
+import Simbolo from '~/components/marca/Simbolo.astro';
+import Selo from '~/components/marca/Selo.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import Construcao from '~/components/marca/Construcao.astro';
+import Peca from '~/components/pecas/Peca.astro';
+import Botao from '~/components/ui/Botao.astro';
+import Marquee from '~/components/ui/Marquee.astro';
+import { adesivos } from '~/lib/stickers';
+import { versoes, paleta, regras, tipografia } from '~/data/marca';
+import { contraste } from '~/lib/cores';
+import { rotulosPeca, type TipoPeca } from '~/components/pecas/tipos';
+
+const marcaCarolize = {
+  texto: 'CAROLIZE', familia: 'serif' as const, peso: 600,
+  tracking: 0.046, caixaAlta: true, assinatura: 'por Carol Guedes',
+};
+// creme · preto · rosa (assinatura) · papel quente de apoio.
+// O rosa entra em dose pequena: e acento, nao superficie.
+const coresPeca = ['#FFF9F5', '#242424', '#D77D91', '#F7EFE9'];
+const pecasMostradas: TipoPeca[] = [
+  'cartao', 'cartaoVerso', 'papelaria', 'post', 'story', 'carrossel',
+  'etiqueta', 'embalagem', 'catalogo', 'tela', 'destaques', 'assinaturaEmail',
+];
+const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
+---
+<Base
+  titulo="Manual da marca"
+  descricao="Sistema de identidade visual da CAROLIZE: conceito, logo, cor, tipografia, universo gráfico e aplicações."
+>
+  <!-- ------------------------------------------------------------- abertura -->
+  <section class="mh papel" data-tema="claro">
+    <div class="env">
+      <span class="label">Manual da marca</span>
+      <div class="mh-marca"><Wordmark animar fragmento class="mh-wm" /></div>
+      <div class="mh-base">
+        <p class="lede">
+          O sistema completo: de onde vem o símbolo, como a marca se comporta,
+          quais cores e tipografias a sustentam e como tudo isso vira peça.
+        </p>
+        <Botao href="#arquivos" variante="contorno">Baixar os arquivos</Botao>
+      </div>
+      <Adesivo nome="brilho" tamanho={30} cor="var(--marca)" class="mh-ad" giro={12} />
+    </div>
+  </section>
+
+  <Marquee
+    class="mh-faixa" velocidade={60}
+    itens={['Conceito', 'Logo', 'Cor', 'Tipografia', 'Universo gráfico', 'Aplicações']}
+  />
+
+  <!-- ------------------------------------------------------------- conceito -->
+  <section class="sec capitulo" id="conceito" data-tema="escuro">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">01</span><span class="label">O conceito</span>
+      </header>
+      <div class="conc">
+        <div>
+          <TextoRevelado como="h2" class="titulo" texto="Um O que se abre em C." />
+          <Revelar modo="sobe" atraso={0.08} class="conc-txt">
+            <p class="corpo">
+              O nome junta <strong>Carol</strong> e o sufixo <strong>-ize</strong>,
+              que transforma substantivo em verbo. O símbolo faz o mesmo movimento
+              em geometria: um anel completo que se abre e deixa escapar um fragmento.
+            </p>
+            <p class="corpo">
+              A espessura do anel não é constante. Ele engrossa de um lado e afina
+              do outro, no mesmo eixo diagonal — o contraste de espessura das
+              serifas clássicas, levado para uma forma puramente geométrica.
+              É isso que faz o símbolo conversar com a tipografia sem copiá-la.
+            </p>
+            <p class="corpo">
+              Lido rápido, é um O. Lido devagar, é um C. É a marca em transformação,
+              que é exatamente o que a Carolize faz.
+            </p>
+          </Revelar>
+        </div>
+        <Revelar modo="escala" atraso={0.1}><Construcao /></Revelar>
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------------- versões -->
+  <section class="sec capitulo" id="arquivos" data-tema="claro">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">02</span><span class="label">Versões e arquivos</span>
+      </header>
+      <Revelar modo="sobe"><p class="lede sec-lede">
+        Oito arquivos vetoriais, prontos para impressão e digital. Clique para baixar.
+      </p></Revelar>
+      <div class="versoes">
+        {versoes.map((v, i) => (
+          <Revelar modo="escala" atraso={(i % 4) * 0.05} class="ver" como="figure">
+            <a href={`/brand/${v.arquivo}`} download class={`ver-caixa ver-caixa--${v.fundo ?? 'claro'}`}>
+              <img src={`/brand/${v.arquivo}`} alt={`Logo CAROLIZE — versão ${v.nome}`} loading="lazy" />
+            </a>
+            <figcaption>
+              <span class="ver-nome">{v.nome}</span>
+              <span class="ver-nota">{v.nota}</span>
+              <a class="ver-link label" href={`/brand/${v.arquivo}`} download>Baixar SVG ↓</a>
+            </figcaption>
+          </Revelar>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------------- regras -->
+  <section class="sec capitulo" id="regras" data-tema="papel">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">03</span><span class="label">Como usar</span>
+      </header>
+      <div class="regras">
+        <Revelar modo="sobe" class="reg reg--sim">
+          <h3 class="sub">Sempre</h3>
+          <ul>{regras.certo.map((r) => <li>{r}</li>)}</ul>
+        </Revelar>
+        <Revelar modo="sobe" atraso={0.06} class="reg reg--nao">
+          <h3 class="sub">Nunca</h3>
+          <ul>{regras.errado.map((r) => <li>{r}</li>)}</ul>
+        </Revelar>
+        <Revelar modo="escala" atraso={0.1} class="reg reg--esc">
+          <h3 class="sub">Redução</h3>
+          <div class="escala">
+            <div><Simbolo tamanho={88} /><span class="label">88px — completo</span></div>
+            <div><Simbolo tamanho={48} /><span class="label">48px — completo</span></div>
+            <div><Simbolo tamanho={32} fragmento={false} /><span class="label">32px — sem fragmento</span></div>
+            <div><Simbolo tamanho={16} fragmento={false} /><span class="label">16px — mínimo</span></div>
+          </div>
+        </Revelar>
+      </div>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------------- paleta -->
+  <section class="sec capitulo" id="cor" data-tema="claro">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">04</span><span class="label">Paleta</span>
+      </header>
+      <Revelar modo="sobe"><p class="lede sec-lede">
+        O creme é a superfície; o preto é a tinta; o rosa é a assinatura — e
+        aparece pouco, de propósito. O vinho dá profundidade sem recorrer ao preto.
+      </p></Revelar>
+      <div class="cores">
+        {paleta.map((c, i) => {
+          const sobrePreto = contraste(c.hex, '#242424');
+          const sobreCreme = contraste(c.hex, '#FFF9F5');
+          return (
+            <Revelar modo="sobe" atraso={(i % 3) * 0.05} class="cor" como="article">
+              <span class="cor-bloco" style={`background:${c.hex}`}></span>
+              <div class="cor-info">
+                <span class="label cor-papel">{c.papel}</span>
+                <h3 class="cor-nome">{c.nome}</h3>
+                <p class="cor-hex label">{c.hex.toUpperCase()}</p>
+                <p class="cor-uso">{c.uso}</p>
+                <p class="cor-contraste label">
+                  Contraste · preto {sobrePreto.toFixed(1)}:1 · creme {sobreCreme.toFixed(1)}:1
+                </p>
+              </div>
+            </Revelar>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------ tipografia -->
+  <section class="sec capitulo" id="tipografia" data-tema="escuro">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">05</span><span class="label">Tipografia</span>
+      </header>
+      <div class="tipos">
+        {tipografia.map((t, i) => (
+          <Revelar modo="sobe" atraso={i * 0.05} class="tipo" como="article">
+            <div class="tipo-cab">
+              <h3 class="tipo-nome">{t.familia}</h3>
+              <span class="label">{t.papel}</span>
+            </div>
+            <p class={`tipo-amostra ${t.classe}`}>{t.amostra}</p>
+            <div class="tipo-rodape">
+              <p class="tipo-desc">{t.descricao}</p>
+              <p class="label tipo-lic">{t.licenca}</p>
+            </div>
+          </Revelar>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------- universo gráfico -->
+  <section class="sec capitulo" id="universo" data-tema="claro">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">06</span><span class="label">Universo gráfico</span>
+      </header>
+      <Revelar modo="sobe"><p class="lede sec-lede">
+        Uma coleção fechada de intervenções: adesivos, carimbos, recortes,
+        setas e rabiscos. Todos desenhados com a mesma lógica, todos reutilizáveis
+        em site, apresentação, rede social e impresso.
+      </p></Revelar>
+      <div class="universo">
+        {nomesAdesivos.map((n, i) => (
+          <Revelar modo="escala" atraso={(i % 6) * 0.03} class="ad-item" como="figure">
+            <span class="ad-caixa">
+              <Adesivo nome={n} tamanho="64%" cor={i % 3 === 0 ? 'var(--marca)' : i % 3 === 1 ? 'var(--vinho)' : 'var(--preto)'} />
+            </span>
+            <figcaption class="label">{n}</figcaption>
+          </Revelar>
+        ))}
+      </div>
+      <Revelar modo="sobe" class="selo-demo">
+        <Selo tamanho={150} cor="var(--vinho)" acento="var(--rosa)" />
+        <p class="corpo">
+          O selo circular fecha propostas, embalagens e materiais impressos.
+          Gira devagar no digital; fica estático no papel.
+        </p>
+      </Revelar>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- aplicações -->
+  <section class="sec capitulo" id="aplicacoes" data-tema="papel">
+    <div class="env">
+      <header class="sec-cab">
+        <span class="label">07</span><span class="label">Aplicações</span>
+      </header>
+      <Revelar modo="sobe"><p class="lede sec-lede">
+        A mesma identidade atravessando papelaria, rede social, embalagem e tela.
+        Todas as peças são construídas com os mesmos tokens do site.
+      </p></Revelar>
+      <div class="aplic">
+        {pecasMostradas.map((t, i) => (
+          <Revelar modo="escala" atraso={(i % 3) * 0.05} class={`ap ap--${t}`}>
+            <Peca
+              tipo={t} marca={marcaCarolize} cores={coresPeca}
+              rotulo={rotulosPeca[t]}
+              frase="Marcas têm histórias. A gente transforma a maneira como elas são contadas."
+              giro={i % 4 === 2 ? -1.1 : i % 4 === 3 ? 0.9 : 0}
+            />
+          </Revelar>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------- kit -->
+  <section class="sec kit capitulo" data-tema="vinho">
+    <div class="env">
+      <TextoRevelado como="h2" class="titulo" texto="Leve a marca com você." />
+      <Revelar modo="sobe" atraso={0.08} class="kit-corpo">
+        <p class="lede">
+          Todos os arquivos vetoriais estão em <code>/public/brand/</code>.
+          As fontes são livres (SIL OFL) e já acompanham o projeto em
+          <code>/public/fonts/</code>.
+        </p>
+        <div class="kit-acoes">
+          <Botao href="/brand/carolize-principal.svg" variante="solido">Logo principal</Botao>
+          <Botao href="/brand/carolize-simbolo.svg" variante="contorno">Símbolo</Botao>
+          <Botao href="/brand/carolize-avatar.svg" variante="contorno">Avatar</Botao>
+        </div>
+      </Revelar>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sec-cab {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(1.6rem, 4vh, 2.6rem); margin-bottom: clamp(1.8rem, 4vh, 2.8rem);
+    border-bottom: 1px solid var(--linha);
+  }
+  .sec-lede { max-width: 54ch; margin-bottom: clamp(2rem, 5vh, 3.2rem); }
+
+  /* abertura */
+  .mh { padding-block: clamp(7rem, 15vh, 10rem) clamp(2.5rem, 6vh, 4rem); position: relative; overflow: clip; }
+  .mh-marca { margin: 1.4rem 0 clamp(2rem, 5vh, 3.2rem); }
+  .mh-wm { width: 100%; }
+  @media (min-width: 64rem) { .mh-wm { width: calc(100% - 6rem); } }
+  .mh-base { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; flex-wrap: wrap; }
+  .mh :global(.mh-ad) { position: absolute; top: 24%; right: 4%; }
+  .mh-faixa {
+    border-block: 1px solid var(--linha); padding-block: .9rem;
+    font-family: var(--mono); font-size: var(--t-label);
+    text-transform: uppercase; letter-spacing: var(--track-label);
+  }
+
+  /* conceito */
+  .conc { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+  @media (max-width: 62rem) { .conc { grid-template-columns: 1fr; } }
+  .conc-txt { max-width: 46ch; margin-top: 1.6rem; }
+  .conc-txt strong { color: var(--marca); font-weight: 500; }
+
+  /* versões */
+  .versoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: clamp(1.4rem, 3vw, 2.4rem); }
+  .ver { margin: 0; display: grid; gap: .9rem; }
+  .ver-caixa {
+    display: grid; place-items: center; padding: 1.6rem; min-height: 8.5rem;
+    border: 1px solid var(--linha); background: var(--creme);
+    transition: border-color .3s var(--ease), transform .4s var(--ease);
+  }
+  .ver-caixa:hover { border-color: var(--marca); transform: translateY(-3px); }
+  .ver-caixa--escuro { background: var(--preto); }
+  .ver-caixa--rosa { background: var(--rosa-fundo); }
+  .ver-caixa img { max-height: 5.5rem; width: auto; max-width: 100%; }
+  .ver figcaption { display: grid; gap: .45rem; }
+  .ver-nome { font-size: var(--t-corpo); font-weight: 600; }
+  .ver-nota { font-size: var(--t-label); line-height: 1.6; color: var(--tinta-2); }
+  .ver-link { color: var(--marca); text-decoration: none; justify-self: start; margin-top: .25rem; }
+  .ver-link:hover { text-decoration: underline; }
+
+  /* regras */
+  .regras { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: clamp(1.8rem, 4vw, 3rem); }
+  .reg h3 { margin: 0 0 1.2rem; font-size: clamp(1.2rem, 2vw, 1.5rem); }
+  .reg ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .reg li {
+    padding-block: .62rem; border-top: 1px solid var(--linha);
+    font-size: var(--t-peq); line-height: 1.55; display: flex; gap: .7rem; align-items: baseline;
+  }
+  .reg--sim li::before { content: '+'; color: var(--marca); font-family: var(--mono); }
+  .reg--nao li::before { content: '×'; color: var(--vinho); font-family: var(--mono); }
+  .escala { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-end; }
+  .escala > div { display: grid; gap: .7rem; justify-items: center; }
+  .escala .label { color: var(--tinta-3); white-space: nowrap; }
+
+  /* cores */
+  .cores { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: clamp(1.4rem, 3vw, 2.4rem); }
+  .cor { display: grid; gap: 1rem; }
+  .cor-bloco { display: block; aspect-ratio: 3 / 2; box-shadow: inset 0 0 0 1px rgb(36 36 36 / .1); }
+  .cor-info { display: grid; gap: .4rem; }
+  .cor-papel { color: var(--marca); }
+  .cor-nome { font-family: var(--serif); font-variation-settings: 'opsz' 48, 'SOFT' 15; font-size: 1.22rem; font-weight: 500; margin: 0; }
+  .cor-hex { font-variant-numeric: tabular-nums; }
+  .cor-uso { font-size: var(--t-label); line-height: 1.7; color: var(--tinta-2); margin: .25rem 0 0; }
+  .cor-contraste { color: var(--tinta-3); margin-top: .35rem; }
+
+  /* tipografia */
+  .tipos { display: grid; gap: clamp(2rem, 5vh, 3.2rem); }
+  .tipo { border-top: 1px solid var(--linha); padding-top: 1.4rem; display: grid; gap: 1.2rem; }
+  .tipo-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .tipo-nome { font-family: var(--serif); font-variation-settings: 'opsz' 48, 'SOFT' 15; font-size: clamp(1.3rem, 2.2vw, 1.8rem); font-weight: 500; margin: 0; }
+  .tipo-amostra { margin: 0; text-wrap: balance; }
+  .esp-serif { font-family: var(--serif); font-variation-settings: 'opsz' 144, 'SOFT' 15; font-size: clamp(2.4rem, 7vw, 5.5rem); font-weight: 500; line-height: .98; letter-spacing: -.025em; }
+  .esp-sans { font-family: var(--sans); font-size: clamp(1.1rem, 2.4vw, 1.9rem); font-weight: 350; line-height: 1.3; max-width: 30ch; }
+  .esp-mono { font-family: var(--mono); font-size: clamp(.9rem, 1.7vw, 1.3rem); letter-spacing: .2em; text-transform: uppercase; }
+  .tipo-rodape { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2rem; align-items: start; }
+  .tipo-desc { font-size: var(--t-peq); line-height: 1.66; color: var(--tinta-2); max-width: 62ch; margin: 0; }
+  .tipo-lic { color: var(--tinta-3); white-space: nowrap; }
+  @media (max-width: 48rem) { .tipo-rodape { grid-template-columns: 1fr; } .tipo-lic { white-space: normal; } }
+
+  /* universo */
+  .universo { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 1rem; }
+  .ad-item { margin: 0; display: grid; gap: .6rem; justify-items: center; }
+  .ad-caixa {
+    display: grid; place-items: center; width: 100%; aspect-ratio: 1;
+    border: 1px solid var(--linha); background: var(--creme);
+    transition: background-color .3s var(--ease), border-color .3s var(--ease);
+  }
+  .ad-item:hover .ad-caixa { background: var(--rosa-fundo); border-color: var(--marca); }
+  .ad-item figcaption { color: var(--tinta-3); text-transform: none; letter-spacing: .04em; }
+  .selo-demo {
+    display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;
+    margin-top: clamp(2.5rem, 6vh, 4rem); padding-top: clamp(2rem, 4vh, 2.8rem);
+    border-top: 1px solid var(--linha);
+  }
+  .selo-demo .corpo { max-width: 38ch; }
+
+  /* aplicações */
+  .aplic { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: clamp(1.6rem, 3.5vw, 2.8rem); align-items: start; }
+  .aplic :global(.ap--papelaria), .aplic :global(.ap--story) { grid-row: span 2; }
+  @media (max-width: 40rem) {
+    .aplic { grid-template-columns: 1fr; }
+    .aplic :global(.ap--papelaria), .aplic :global(.ap--story) { grid-row: auto; }
+  }
+
+  /* kit */
+  .kit-corpo { margin-top: 1.4rem; }
+  .kit-corpo code { font-family: var(--mono); font-size: .88em; background: color-mix(in oklab, var(--creme) 14%, transparent); padding: .12em .45em; }
+  .kit-acoes { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+  @media (prefers-reduced-motion: reduce) { .ver-caixa, .ad-caixa { transition: none; } }
+</style>

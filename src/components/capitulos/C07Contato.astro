@@ -1,0 +1,142 @@
+---
+import Revelar from '~/components/ui/Revelar.astro';
+import TextoRevelado from '~/components/ui/TextoRevelado.astro';
+import Botao from '~/components/ui/Botao.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import Selo from '~/components/marca/Selo.astro';
+import { links, redesAtivas, contatoPendente } from '~/data/site';
+
+const redes = redesAtivas();
+---
+<section class="contato capitulo" id="contato" data-capitulo="contato" data-tema="escuro">
+  <div class="env">
+    <Revelar modo="fade" class="ct-cabeca">
+      <span class="label">Capítulo 07</span>
+      <span class="label">Contato</span>
+    </Revelar>
+
+    <div class="ct-centro">
+      <TextoRevelado
+        como="h2" class="display ct-h"
+        texto="Tem uma ideia? Vamos dar forma a ela."
+        passo={0.045}
+      />
+      <Adesivo nome="brilho" tamanho={44} cor="var(--rosa)" class="ct-brilho" giro={-12} />
+    </div>
+
+    <Revelar modo="sobe" atraso={0.1} class="ct-acoes">
+      {links.whatsapp && (
+        <Botao href={links.whatsapp} externo variante="solido">Falar no WhatsApp</Botao>
+      )}
+      {links.email && (
+        <Botao href={links.email} variante="contorno">Enviar um e-mail</Botao>
+      )}
+      {links.instagram && (
+        <Botao href={links.instagram} externo variante="texto" seta={false}>Instagram</Botao>
+      )}
+      {contatoPendente && (
+        <p class="ct-pendente">
+          <strong>Links de contato ainda não configurados.</strong>
+          Abra <code>src/data/site.ts</code> e preencha WhatsApp, e-mail e
+          Instagram — os botões aparecem sozinhos.
+        </p>
+      )}
+    </Revelar>
+
+    <div class="ct-base">
+      <Revelar modo="sobe" class="ct-orcamento">
+        <h3 class="sub">Quer um orçamento?</h3>
+        <p class="corpo">
+          Conte em poucas linhas o que a sua marca faz, onde ela está hoje e
+          onde você quer que ela chegue. A partir disso eu monto uma proposta
+          com escopo, prazo e valores.
+        </p>
+        <ul class="ct-pistas">
+          <li>O que o negócio vende e para quem</li>
+          <li>O que já existe hoje (redes, site, identidade)</li>
+          <li>O que incomoda e o que você quer mudar</li>
+          <li>Prazo e expectativa de investimento</li>
+        </ul>
+      </Revelar>
+
+      <Revelar modo="escala" atraso={0.08} class="ct-canais">
+        <Selo tamanho={128} cor="var(--creme)" acento="var(--rosa)" class="ct-selo" />
+        {redes.length > 0 && (
+          <ul>
+            {redes.map((r) => (
+              <li>
+                <a href={r.url} target="_blank" rel="noopener noreferrer">
+                  <span class="ct-rede">{r.nome}</span>
+                  {r.rotulo && <span class="ct-rotulo">{r.rotulo}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Revelar>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contato { overflow: clip; padding-bottom: clamp(3rem, 7vh, 5rem); }
+  .ct-cabeca {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding-bottom: clamp(2rem, 5vh, 3.4rem); border-bottom: 1px solid var(--linha);
+  }
+  .ct-centro { position: relative; padding-block: clamp(3rem, 9vh, 6rem) 0; }
+  .ct-h { max-width: 13ch; font-size: clamp(2.8rem, 10.4vw, 9rem); line-height: .94; }
+  .ct-brilho { position: absolute; top: 14%; right: 6%; }
+  @media (max-width: 48rem) { .ct-brilho { top: 2%; right: 2%; } }
+
+  .ct-acoes {
+    display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; align-items: center;
+    padding-block: clamp(2rem, 5vh, 3.2rem);
+  }
+  .ct-pendente {
+    font-size: var(--t-peq); line-height: 1.7; color: var(--tinta-3);
+    max-width: 48ch; margin: 0;
+  }
+  .ct-pendente strong { display: block; color: var(--tinta-2); font-weight: 600; }
+  .ct-pendente code {
+    font-family: var(--mono);
+    background: color-mix(in oklab, var(--creme) 10%, transparent);
+    padding: .1em .4em;
+  }
+
+  .ct-base {
+    display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    padding-top: clamp(2rem, 5vh, 3.4rem);
+    border-top: 1px solid var(--linha);
+    align-items: start;
+  }
+  @media (max-width: 58rem) { .ct-base { grid-template-columns: 1fr; } }
+
+  .ct-orcamento h3 { margin: 0 0 .9rem; }
+  .ct-orcamento .corpo { max-width: 46ch; }
+  .ct-pistas {
+    list-style: none; margin: 1.4rem 0 0; padding: 0;
+    display: grid; gap: 0; max-width: 42ch;
+  }
+  .ct-pistas li {
+    padding-block: .58rem; border-top: 1px solid var(--linha);
+    font-size: var(--t-peq); color: var(--tinta-2);
+    display: flex; gap: .7rem; align-items: baseline;
+  }
+  .ct-pistas li::before { content: '—'; color: var(--marca); }
+
+  .ct-canais { display: grid; gap: 2rem; justify-items: start; }
+  .ct-canais ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; width: 100%; }
+  .ct-canais li { border-top: 1px solid var(--linha); }
+  .ct-canais li:last-child { border-bottom: 1px solid var(--linha); }
+  .ct-canais a {
+    display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
+    padding-block: .78rem; text-decoration: none;
+    transition: padding-left .34s var(--ease), color .34s var(--ease);
+  }
+  .ct-canais a:hover, .ct-canais a:focus-visible { padding-left: .5rem; color: var(--marca); }
+  .ct-rede { font-size: var(--t-corpo); }
+  .ct-rotulo { font-family: var(--mono); font-size: var(--t-label); color: var(--tinta-3); }
+  @media (prefers-reduced-motion: reduce) { .ct-canais a { transition: none; } }
+</style>

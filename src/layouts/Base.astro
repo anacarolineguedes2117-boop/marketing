@@ -1,0 +1,99 @@
+---
+import '~/styles/tokens.css';
+import '~/styles/base.css';
+import Cabecalho from '~/components/ui/Cabecalho.astro';
+import Rodape from '~/components/ui/Rodape.astro';
+import { site } from '~/data/site';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+  /** Esconde da indexação (páginas internas, como /proposta). */
+  privada?: boolean;
+  /** Oculta cabeçalho e rodapé (usado em materiais para impressão). */
+  nu?: boolean;
+  classe?: string;
+  compacto?: boolean;
+  imagem?: string;
+}
+
+const {
+  titulo, descricao = site.descricao, privada = false,
+  nu = false, classe = '', compacto = true, imagem = '/og.png',
+} = Astro.props;
+
+const tituloFinal = titulo ? `${titulo} — ${site.nome}` : site.titulo;
+const canonica = new URL(Astro.url.pathname, site.url).href;
+const ogAbs = new URL(imagem, site.url).href;
+---
+<!doctype html>
+<html lang={site.idioma} data-tema="claro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{tituloFinal}</title>
+  <meta name="description" content={descricao} />
+  <link rel="canonical" href={canonica} />
+  {privada
+    ? <meta name="robots" content="noindex, nofollow, noarchive" />
+    : <meta name="robots" content="index, follow, max-image-preview:large" />}
+
+  <meta name="theme-color" content="#fff9f5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#242424" media="(prefers-color-scheme: dark)" />
+  <meta name="color-scheme" content="light" />
+
+  <link rel="icon" href="/brand/carolize-favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/brand/carolize-avatar.svg" />
+
+  <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={site.nome} />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content={tituloFinal} />
+  <meta property="og:description" content={descricao} />
+  <meta property="og:url" content={canonica} />
+  <meta property="og:image" content={ogAbs} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={tituloFinal} />
+  <meta name="twitter:description" content={descricao} />
+  <meta name="twitter:image" content={ogAbs} />
+
+  {!privada && (
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ProfessionalService',
+      name: site.nome,
+      alternateName: site.assinatura,
+      description: site.descricao,
+      url: site.url,
+      image: ogAbs,
+      areaServed: 'BR',
+      knowsAbout: site.assuntos,
+      founder: { '@type': 'Person', name: site.autora },
+    })} />
+  )}
+
+  <style is:global>
+    /* Textura de papel: ruído SVG inline — zero requisições, ~700 bytes. */
+    :root {
+      --textura-papel: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+
+<body class={classe}>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  {!nu && <Cabecalho compacto={compacto} />}
+  <main id="conteudo">
+    <slot />
+  </main>
+  {!nu && <Rodape />}
+
+  <script>
+    import { iniciarTudo } from '~/lib/motion';
+    iniciarTudo();
+  </script>
+</body>
+</html>

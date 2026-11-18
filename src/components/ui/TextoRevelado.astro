@@ -11,16 +11,22 @@ interface Props {
   passo?: number;
   id?: string;
 }
-const { texto, como = 'h2', class: klass = '', atraso = 0, passo = 0.055, id } = Astro.props;
+const {
+  texto, como = 'h2', class: klass = '', atraso = 0, passo = 0.055, id,
+  ...resto
+} = Astro.props;
 const Tag = como as any;
 const palavras = texto.split(/\s+/);
 ---
-<Tag class:list={['tr', klass]} id={id} data-revelar="fade" style={`--atraso:0s`}>
+<Tag class:list={['tr', klass]} id={id} data-revelar="fade" {...resto}>
   <span class="so-leitor">{texto}</span>
   <span aria-hidden="true" class="tr-linhas">
-    {palavras.map((p: string, i: number) => (
-      <span class="tr-p"><span class="tr-i" style={`--d:${(atraso + i * passo).toFixed(3)}s`}>{p}</span></span>
-    ))}
+    {/* o espaco entre as palavras e um no de texto real: sem ele os
+        inline-block colam e o navegador perde o ponto de quebra de linha */}
+    {palavras.flatMap((p: string, i: number) => [
+      i > 0 ? ' ' : null,
+      <span class="tr-p"><span class="tr-i" style={`--d:${(atraso + i * passo).toFixed(3)}s`}>{p}</span></span>,
+    ])}
   </span>
 </Tag>
 <style>
@@ -33,7 +39,6 @@ const palavras = texto.split(/\s+/);
     padding-block: .06em;
     margin-block: -.06em;
   }
-  .tr-p:not(:last-child)::after { content: ' '; }
   .tr-i {
     display: inline-block;
     translate: 0 102%;

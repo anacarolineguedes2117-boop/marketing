@@ -51,7 +51,11 @@ const mCurta = { ...m, assinatura: undefined };
 const inicial = m.texto.trim()[0] ?? 'C';
 ---
 
-<figure class:list={['peca', `peca--${tipo}`, klass]} style={`${vars}${giro ? `rotate:${giro}deg;` : ''}${style}`} {...resto}>
+<figure
+  class:list={['peca', `peca--${tipo}`, klass]}
+  style={`${vars}${giro ? `--giro:${giro}deg;` : ''}${style}`}
+  {...resto}
+>
   <div class="peca-superficie">
 
     {tipo === 'cartao' && (
@@ -199,6 +203,9 @@ const inicial = m.texto.trim()[0] ?? 'C';
   .peca { margin: 0; display: grid; gap: .8rem; }
   .peca-superficie {
     position: relative;
+    /* o giro fica na superficie, nao na figura: girar a figura inteira
+       inclinaria tambem a legenda */
+    rotate: var(--giro, 0deg);
     background: var(--p-bg);
     color: var(--p-tinta);
     box-shadow: var(--sombra-papel);

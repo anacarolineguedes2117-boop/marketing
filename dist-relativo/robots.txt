@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /proposta
+
+Sitemap: https://carolize.com.br/sitemap.xml

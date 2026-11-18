@@ -73,6 +73,9 @@ const raiz = compacto ? '/' : '#abertura';
     transition: color .7s var(--ease), translate .45s var(--ease);
   }
   :global(html[data-topo-oculto]) .topo { translate: 0 -110%; }
+  /* o painel e escuro: o cabecalho continua por cima e precisa inverter,
+     senao o botao Fechar desaparece sobre o proprio fundo */
+  :global(html[data-menu-aberto]) .topo { translate: 0; color: var(--creme); }
 
   .topo-marca {
     display: inline-flex; align-items: center; gap: .62rem;
@@ -88,6 +91,7 @@ const raiz = compacto ? '/' : '#abertura';
     text-transform: uppercase; letter-spacing: var(--track-label);
     text-decoration: none; position: relative; padding-block: .2em;
   }
+  .topo-atalhos a { padding-block: .35em; }
   .topo-atalhos a::after {
     content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
     background: currentColor; transform: scaleX(0); transform-origin: left;
@@ -130,12 +134,12 @@ const raiz = compacto ? '/' : '#abertura';
   }
   @media (max-width: 56rem) { .menu-grade { grid-template-columns: 1fr; } }
 
-  .menu-col .label { color: color-mix(in oklab, var(--creme) 44%, var(--preto)); margin-bottom: 1.4rem; }
+  .menu-col .label { color: color-mix(in oklab, var(--creme) 70%, var(--preto)); margin-bottom: 1.4rem; }
   .menu-label2 { margin-top: 2.4rem; }
   .menu-lista { list-style: none; margin: 0; padding: 0; counter-reset: none; }
   .menu-lista a {
     display: flex; align-items: baseline; gap: 1.1rem; text-decoration: none;
-    padding-block: .22em; opacity: .62;
+    padding-block: .22em; opacity: .82;
     transition: opacity .3s var(--ease), translate .4s var(--ease);
   }
   .menu-lista a:hover, .menu-lista a:focus-visible { opacity: 1; translate: .55rem 0; }
@@ -150,7 +154,8 @@ const raiz = compacto ? '/' : '#abertura';
   .menu-redes { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
   .menu-redes a {
     font-family: var(--mono); font-size: var(--t-peq); text-decoration: none;
-    opacity: .72; transition: opacity .3s var(--ease);
+    display: inline-block; padding-block: .3rem;
+    opacity: .88; transition: opacity .3s var(--ease);
   }
   .menu-redes a:hover { opacity: 1; }
   .menu-selo { margin-top: 2.8rem; opacity: .8; }

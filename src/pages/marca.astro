@@ -27,6 +27,13 @@ const pecasMostradas: TipoPeca[] = [
   'etiqueta', 'embalagem', 'catalogo', 'tela', 'destaques', 'assinaturaEmail',
 ];
 const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
+
+/** Dimensiona pelo lado mais longo: formas verticais (colchetes) nao podem
+ *  ser medidas pela largura, senao a altura resultante estoura a celula. */
+function tamanhoNaGrade(vb: string) {
+  const [, , l, a] = vb.split(' ').map(Number);
+  return a > l ? `${((64 * l) / a).toFixed(1)}%` : '64%';
+}
 ---
 <Base
   titulo="Manual da marca"
@@ -35,7 +42,8 @@ const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
   <!-- ------------------------------------------------------------- abertura -->
   <section class="mh papel" data-tema="claro">
     <div class="env">
-      <span class="label">Manual da marca</span>
+      <h1 class="so-leitor">CAROLIZE — manual da marca</h1>
+      <span class="label" aria-hidden="true">Manual da marca</span>
       <div class="mh-marca"><Wordmark animar fragmento class="mh-wm" /></div>
       <div class="mh-base">
         <p class="lede">
@@ -211,7 +219,7 @@ const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
         {nomesAdesivos.map((n, i) => (
           <Revelar modo="escala" atraso={(i % 6) * 0.03} class="ad-item" como="figure">
             <span class="ad-caixa">
-              <Adesivo nome={n} tamanho="64%" cor={i % 3 === 0 ? 'var(--marca)' : i % 3 === 1 ? 'var(--vinho)' : 'var(--preto)'} />
+              <Adesivo nome={n} tamanho={tamanhoNaGrade(adesivos[n].vb)} cor={i % 3 === 0 ? 'var(--marca)' : i % 3 === 1 ? 'var(--vinho)' : 'var(--preto)'} />
             </span>
             <figcaption class="label">{n}</figcaption>
           </Revelar>
@@ -314,7 +322,7 @@ const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
   .ver figcaption { display: grid; gap: .45rem; }
   .ver-nome { font-size: var(--t-corpo); font-weight: 600; }
   .ver-nota { font-size: var(--t-label); line-height: 1.6; color: var(--tinta-2); }
-  .ver-link { color: var(--marca); text-decoration: none; justify-self: start; margin-top: .25rem; }
+  .ver-link { color: var(--acento); text-decoration: none; justify-self: start; margin-top: .25rem; }
   .ver-link:hover { text-decoration: underline; }
 
   /* regras */
@@ -325,7 +333,7 @@ const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
     padding-block: .62rem; border-top: 1px solid var(--linha);
     font-size: var(--t-peq); line-height: 1.55; display: flex; gap: .7rem; align-items: baseline;
   }
-  .reg--sim li::before { content: '+'; color: var(--marca); font-family: var(--mono); }
+  .reg--sim li::before { content: '+'; color: var(--acento); font-family: var(--mono); }
   .reg--nao li::before { content: '×'; color: var(--vinho); font-family: var(--mono); }
   .escala { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-end; }
   .escala > div { display: grid; gap: .7rem; justify-items: center; }
@@ -336,7 +344,7 @@ const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
   .cor { display: grid; gap: 1rem; }
   .cor-bloco { display: block; aspect-ratio: 3 / 2; box-shadow: inset 0 0 0 1px rgb(36 36 36 / .1); }
   .cor-info { display: grid; gap: .4rem; }
-  .cor-papel { color: var(--marca); }
+  .cor-papel { color: var(--acento); }
   .cor-nome { font-family: var(--serif); font-variation-settings: 'opsz' 48, 'SOFT' 15; font-size: 1.22rem; font-weight: 500; margin: 0; }
   .cor-hex { font-variant-numeric: tabular-nums; }
   .cor-uso { font-size: var(--t-label); line-height: 1.7; color: var(--tinta-2); margin: .25rem 0 0; }
@@ -358,9 +366,10 @@ const nomesAdesivos = Object.keys(adesivos) as (keyof typeof adesivos)[];
 
   /* universo */
   .universo { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 1rem; }
-  .ad-item { margin: 0; display: grid; gap: .6rem; justify-items: center; }
+  .ad-item { margin: 0; min-width: 0; display: grid; gap: .6rem; justify-items: center; }
   .ad-caixa {
     display: grid; place-items: center; width: 100%; aspect-ratio: 1;
+    min-width: 0; overflow: clip;   /* trava a contribuicao de tamanho minimo */
     border: 1px solid var(--linha); background: var(--creme);
     transition: background-color .3s var(--ease), border-color .3s var(--ease);
   }

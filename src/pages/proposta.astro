@@ -1,0 +1,205 @@
+---
+/**
+ * PÁGINA INTERNA — proposta comercial.
+ *
+ * Não é linkada em lugar nenhum do site, não entra no sitemap e é marcada
+ * como noindex/nofollow. Serve para você enviar o link direto a um cliente.
+ *
+ * ATENÇÃO: noindex não é senha. Quem tiver o link, abre. Para proteção real,
+ * veja a seção "Área privada" em docs/MANUAL.md.
+ *
+ * Para montar uma proposta: edite `propostaAtual` em src/data/comercial.ts.
+ */
+import Base from '~/layouts/Base.astro';
+import Wordmark from '~/components/marca/Wordmark.astro';
+import Selo from '~/components/marca/Selo.astro';
+import Adesivo from '~/components/marca/Adesivo.astro';
+import Botao from '~/components/ui/Botao.astro';
+import { tabela, gestaoGeral, propostaAtual, item, reais } from '~/data/comercial';
+import { site, links } from '~/data/site';
+
+const selecionados = propostaAtual.itens
+  .map((chave) => item(chave))
+  .filter((i): i is NonNullable<typeof i> => Boolean(i));
+
+const mensal = selecionados.filter((i) => i.recorrencia === 'mes');
+const avulso = selecionados.filter((i) => i.recorrencia === 'unico');
+const somaMes = mensal.reduce((t, i) => t + (i.valor ?? 0), 0);
+const somaUnico = avulso.reduce((t, i) => t + (i.valor ?? 0), 0);
+const temProposta = selecionados.length > 0;
+---
+<Base titulo="Proposta comercial" privada nu classe="pagina-proposta">
+  <article class="prop">
+    <header class="prop-topo">
+      <div class="env">
+        <div class="prop-cab">
+          <Wordmark class="prop-logo" fragmento />
+          <div class="prop-meta">
+            <h1 class="label">Proposta comercial</h1>
+            {propostaAtual.cliente && <p class="prop-cliente">{propostaAtual.cliente}</p>}
+            {propostaAtual.validade && <p class="label">Validade: {propostaAtual.validade}</p>}
+          </div>
+        </div>
+        <p class="prop-interno label">
+          <Adesivo nome="asterisco" tamanho={11} cor="var(--vinho)" /> Documento interno · não indexado
+        </p>
+      </div>
+    </header>
+
+    {temProposta ? (
+      <section class="env prop-sel">
+        <h2 class="sub">Escopo selecionado</h2>
+        {mensal.length > 0 && (
+          <>
+            <h3 class="label prop-grupo">Recorrente — por mês</h3>
+            <ul class="prop-itens">
+              {mensal.map((i) => (
+                <li><span>{i.nome}</span><span class="prop-val">{i.aPartirDe && 'a partir de '}{reais(i.valor)}</span></li>
+              ))}
+            </ul>
+            <p class="prop-soma"><span>Total mensal</span><strong>{reais(somaMes)}</strong></p>
+          </>
+        )}
+        {avulso.length > 0 && (
+          <>
+            <h3 class="label prop-grupo">Entregas avulsas</h3>
+            <ul class="prop-itens">
+              {avulso.map((i) => (
+                <li><span>{i.nome}</span><span class="prop-val">{i.aPartirDe && 'a partir de '}{reais(i.valor)}</span></li>
+              ))}
+            </ul>
+            <p class="prop-soma"><span>Total avulso</span><strong>{reais(somaUnico)}</strong></p>
+          </>
+        )}
+      </section>
+    ) : (
+      <section class="env prop-vazio">
+        <p>
+          <strong>Nenhuma proposta montada ainda.</strong>
+          Abra <code>src/data/comercial.ts</code> e preencha <code>propostaAtual.itens</code>
+          com as chaves dos serviços. A tabela completa fica abaixo, para referência.
+        </p>
+      </section>
+    )}
+
+    {gestaoGeral.ativo && (
+      <section class="env prop-pacote">
+        <h2 class="sub">{gestaoGeral.titulo}</h2>
+        {gestaoGeral.descricao && <p class="corpo">{gestaoGeral.descricao}</p>}
+        {gestaoGeral.inclui.length > 0 && (
+          <ul class="prop-inclui">{gestaoGeral.inclui.map((t) => <li>{t}</li>)}</ul>
+        )}
+        {gestaoGeral.valor !== null && (
+          <p class="prop-soma"><span>Investimento</span><strong>{reais(gestaoGeral.valor)} / mês</strong></p>
+        )}
+        {gestaoGeral.condicoes.length > 0 && (
+          <ul class="prop-cond">{gestaoGeral.condicoes.map((t) => <li>{t}</li>)}</ul>
+        )}
+      </section>
+    )}
+
+    <section class="env prop-tabela">
+      <h2 class="sub">Tabela de referência</h2>
+      <p class="prop-nota label">Valores vigentes. Serviços podem ser combinados.</p>
+      <div class="prop-blocos">
+        {tabela.map((b) => (
+          <div class="prop-bloco">
+            <h3 class="label">{b.titulo}</h3>
+            <ul class="prop-itens">
+              {b.itens.map((i) => (
+                <li>
+                  <span>{i.nome}</span>
+                  <span class="prop-val">
+                    {i.aPartirDe && <em>a partir de </em>}{reais(i.valor)}
+                    {i.recorrencia === 'mes' && <em> / mês</em>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {propostaAtual.observacoes.length > 0 && (
+      <section class="env prop-obs">
+        <h2 class="label">Observações</h2>
+        <ul>{propostaAtual.observacoes.map((o) => <li>{o}</li>)}</ul>
+      </section>
+    )}
+
+    <footer class="prop-rodape">
+      <div class="env">
+        <Selo tamanho={110} cor="var(--vinho)" acento="var(--rosa)" volta={0} />
+        <div>
+          <p class="sub">Vamos combinar os detalhes?</p>
+          {links.whatsapp && <Botao href={links.whatsapp} externo variante="solido">Falar no WhatsApp</Botao>}
+          {!links.whatsapp && <p class="label">Configure o contato em src/data/site.ts</p>}
+        </div>
+        <p class="label prop-assin">{site.assinatura}</p>
+      </div>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .prop { padding-block: 3rem 4rem; }
+  .prop > section, .prop > header, .prop > footer { margin-bottom: clamp(2.4rem, 6vh, 4rem); }
+
+  .prop-cab { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap; }
+  .prop-logo { width: min(100%, 20rem); }
+  .prop-meta { text-align: right; display: grid; gap: .4rem; }
+  .prop-cliente { font-family: var(--serif); font-size: 1.5rem; margin: 0; font-weight: 500; }
+  .prop-interno {
+    display: flex; align-items: center; gap: .5rem; color: var(--vinho);
+    margin-top: 1.6rem; padding-top: 1rem; border-top: 1px solid var(--linha);
+  }
+
+  .prop-sel h2, .prop-tabela h2, .prop-pacote h2 { margin: 0 0 1.2rem; }
+  .prop-grupo { display: block; margin: 1.6rem 0 .6rem; color: var(--acento); }
+  .prop-itens { list-style: none; margin: 0; padding: 0; }
+  .prop-itens li {
+    display: flex; justify-content: space-between; gap: 1.5rem;
+    padding-block: .62rem; border-top: 1px solid var(--linha);
+    font-size: var(--t-peq);
+  }
+  .prop-val { font-family: var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .prop-val em { font-style: normal; font-size: .85em; color: var(--tinta-3); }
+  .prop-soma {
+    display: flex; justify-content: space-between; gap: 1.5rem;
+    padding-top: .8rem; margin-top: .4rem; border-top: 2px solid var(--preto);
+    font-family: var(--mono); font-size: var(--t-corpo);
+  }
+  .prop-soma strong { font-variant-numeric: tabular-nums; }
+
+  .prop-vazio p {
+    font-size: var(--t-peq); line-height: 1.7; color: var(--tinta-2);
+    border-left: 2px solid var(--marca); padding-left: 1.2rem; max-width: 60ch; margin: 0;
+  }
+  .prop-vazio strong { display: block; color: var(--tinta); }
+  .prop-vazio code, .prop-nota code { font-family: var(--mono); background: var(--creme-fundo); padding: .1em .4em; }
+
+  .prop-nota { display: block; margin-bottom: 1.4rem; color: var(--tinta-3); }
+  .prop-blocos { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.6rem 3rem; }
+  .prop-bloco h3 { margin: 0 0 .4rem; color: var(--acento); }
+
+  .prop-inclui, .prop-cond { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .4rem; }
+  .prop-inclui li, .prop-cond li { font-size: var(--t-peq); display: flex; gap: .6rem; }
+  .prop-inclui li::before { content: '+'; color: var(--acento); font-family: var(--mono); }
+  .prop-cond li::before { content: '—'; color: var(--tinta-3); }
+
+  .prop-obs ul { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; gap: .5rem; }
+  .prop-obs li { font-size: var(--t-label); line-height: 1.7; color: var(--tinta-2); display: flex; gap: .6rem; }
+  .prop-obs li::before { content: '·'; color: var(--acento); }
+
+  .prop-rodape { border-top: 1px solid var(--linha); padding-top: 2.4rem; }
+  .prop-rodape .env { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .prop-rodape .sub { margin: 0 0 1rem; }
+  .prop-assin { margin-left: auto; color: var(--tinta-3); }
+
+  @media print {
+    .prop { padding: 0; }
+    .prop-interno, .prop-rodape :global(.btn) { display: none; }
+    .prop-blocos { break-inside: avoid; }
+  }
+</style>

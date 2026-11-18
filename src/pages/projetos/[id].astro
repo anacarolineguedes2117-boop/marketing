@@ -147,6 +147,7 @@ const blocos = [
                 <Peca
                   tipo={tipo} marca={d.marca} cores={c.pecas}
                   frase={d.frase ?? d.titulo}
+                  rotuloInterno={d.segmento}
                   rotulo={rotulosPeca[tipo]}
                   giro={i % 3 === 1 ? -1.2 : i % 3 === 2 ? 1 : 0}
                 />
@@ -237,7 +238,7 @@ const blocos = [
   .caso-blocos { display: grid; gap: clamp(2rem, 5vw, 4rem); grid-template-columns: repeat(3, 1fr); }
   @media (max-width: 62rem) { .caso-blocos { grid-template-columns: 1fr; } }
   .bloco { display: grid; gap: .8rem; align-content: start; border-top: 1px solid var(--linha); padding-top: 1.4rem; }
-  .bloco-n { font-size: 1.6rem; color: var(--marca); }
+  .bloco-n { font-size: 1.6rem; color: var(--acento); }
   .bloco-t { margin: 0; font-size: clamp(1.3rem, 2.1vw, 1.7rem); }
   .bloco-c { margin: 0; font-size: var(--t-peq); line-height: 1.68; color: var(--tinta-2); text-wrap: pretty; }
 

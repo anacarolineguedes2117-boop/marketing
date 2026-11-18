@@ -42,7 +42,7 @@ const conceituais = projetos.filter((p) => p.data.conceitual).length;
     <div class="env">
       {projetos.length > 0 ? (
         <div class="lista-itens">
-          {projetos.map((p, i) => <CartaoProjeto projeto={p} indice={i} />)}
+          {projetos.map((p, i) => <CartaoProjeto projeto={p} indice={i} nivel={2} />)}
         </div>
       ) : (
         <p class="lede">Nenhum projeto publicado ainda.</p>

@@ -74,8 +74,11 @@
   /* --- cores semanticas (reescritas por secao) --------------------------- */
   --bg:       var(--creme);
   --tinta:    var(--preto);
-  --tinta-2:  color-mix(in oklab, var(--preto) 62%, var(--creme));
-  --tinta-3:  color-mix(in oklab, var(--preto) 38%, var(--creme));
+  /* Os tons de apoio foram calibrados para 4.5:1 contra TODAS as superficies
+     claras do sistema (creme, creme-fundo e rosa-fundo) — rotulos sao
+     pequenos e precisam passar em AA. */
+  --tinta-2:  color-mix(in oklab, var(--preto) 82%, var(--creme));
+  --tinta-3:  color-mix(in oklab, var(--preto) 78%, var(--creme));
   --acento:   var(--vinho);
   --marca:    var(--rosa);
   --linha:    color-mix(in oklab, var(--preto) 14%, transparent);
@@ -121,8 +124,8 @@
 [data-tema='escuro'] {
   --bg: var(--preto);
   --tinta: var(--creme);
-  --tinta-2: color-mix(in oklab, var(--creme) 70%, var(--preto));
-  --tinta-3: color-mix(in oklab, var(--creme) 46%, var(--preto));
+  --tinta-2: color-mix(in oklab, var(--creme) 82%, var(--preto));
+  --tinta-3: color-mix(in oklab, var(--creme) 70%, var(--preto));
   --acento: var(--rosa);
   --linha: color-mix(in oklab, var(--creme) 16%, transparent);
   --linha-forte: color-mix(in oklab, var(--creme) 30%, transparent);
@@ -130,8 +133,8 @@
 [data-tema='vinho'] {
   --bg: var(--vinho);
   --tinta: var(--creme);
-  --tinta-2: color-mix(in oklab, var(--creme) 76%, var(--vinho));
-  --tinta-3: color-mix(in oklab, var(--creme) 52%, var(--vinho));
+  --tinta-2: color-mix(in oklab, var(--creme) 88%, var(--vinho));
+  --tinta-3: color-mix(in oklab, var(--creme) 78%, var(--vinho));
   --acento: var(--rosa-claro);
   --linha: color-mix(in oklab, var(--creme) 20%, transparent);
   --linha-forte: color-mix(in oklab, var(--creme) 34%, transparent);
@@ -139,6 +142,8 @@
 [data-tema='rosa'] {
   --bg: var(--rosa-fundo);
   --tinta: var(--preto);
+  --tinta-2: color-mix(in oklab, var(--preto) 82%, var(--rosa-fundo));
+  --tinta-3: color-mix(in oklab, var(--preto) 78%, var(--rosa-fundo));
   --acento: var(--vinho);
   --linha: color-mix(in oklab, var(--vinho) 18%, transparent);
   --linha-forte: color-mix(in oklab, var(--vinho) 32%, transparent);

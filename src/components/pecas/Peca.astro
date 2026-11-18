@@ -26,12 +26,15 @@ interface Props {
   class?: string;
   /** Frase usada nas pecas que mostram conteudo. */
   frase?: string;
+  /** Texto da etiqueta dentro da peca (post, story). */
+  rotuloInterno?: string;
   style?: string;
 }
 
 const {
   tipo, marca, cores, rotulo, giro = 0, class: klass = '',
   frase = 'Toda marca tem uma história. A nossa parte é contá-la bem.',
+  rotuloInterno,
   style = '',
   ...resto
 } = Astro.props;
@@ -53,7 +56,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
 
     {tipo === 'cartao' && (
       <div class="s cartao">
-        <MarcaProjeto {...m} tamanho="1.05rem" class="cartao-marca" />
+        <MarcaProjeto {...m} tamanho="7cqw" class="cartao-marca" />
         <span class="cartao-regra"></span>
         <span class="cartao-info">contato · endereço · @perfil</span>
       </div>
@@ -68,7 +71,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
     {tipo === 'papelaria' && (
       <div class="s papel">
         <header class="papel-topo">
-          <MarcaProjeto {...mCurta} tamanho=".72rem" />
+          <MarcaProjeto {...mCurta} tamanho="4.6cqw" />
           <span class="papel-data">—</span>
         </header>
         <div class="papel-corpo">
@@ -82,10 +85,10 @@ const inicial = m.texto.trim()[0] ?? 'C';
 
     {tipo === 'post' && (
       <div class="s post">
-        <span class="post-label">01 — manifesto</span>
+        <span class="post-label">{rotuloInterno ?? "01 — manifesto"}</span>
         <p class="post-frase">{frase}</p>
         <div class="post-rodape">
-          <MarcaProjeto {...m} tamanho=".62rem" />
+          <MarcaProjeto {...m} tamanho="3.6cqw" />
           <Adesivo nome="estrela" tamanho={14} cor="var(--p-acento)" />
         </div>
         <span class="post-forma" aria-hidden="true"></span>
@@ -98,7 +101,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
           <div class="car-slide" style={`--i:${i}`}>
             {i === 0 && <p class="car-t">{frase}</p>}
             {i === 1 && <span class="car-n">02</span>}
-            {i === 2 && <MarcaProjeto {...mCurta} tamanho=".66rem" />}
+            {i === 2 && <MarcaProjeto {...mCurta} tamanho="2.9cqw" />}
           </div>
         ))}
       </div>
@@ -107,7 +110,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
     {tipo === 'story' && (
       <div class="s story">
         <div class="story-barras">{[0, 1, 2].map((i) => <span style={`--i:${i}`}></span>)}</div>
-        <span class="story-label">novidade</span>
+        <span class="story-label">{rotuloInterno ?? "novidade"}</span>
         <div class="story-meio"><p class="story-frase">{frase}</p></div>
         <div class="story-cta"><span>arraste para cima</span></div>
         <span class="story-forma" aria-hidden="true"></span>
@@ -117,7 +120,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
     {tipo === 'etiqueta' && (
       <div class="s etiq">
         <span class="etiq-furo"></span>
-        <MarcaProjeto {...m} tamanho=".82rem" />
+        <MarcaProjeto {...m} tamanho="6.4cqw" />
         <span class="etiq-cod">nº 001</span>
       </div>
     )}
@@ -139,7 +142,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
           <div class="cat-img"></div>
         </div>
         <div class="cat-pag cat-pag--dir">
-          <MarcaProjeto {...mCurta} tamanho=".58rem" />
+          <MarcaProjeto {...mCurta} tamanho="3cqw" />
           <div class="cat-texto">
             {[100, 92, 97, 85, 0, 96, 78].map((w) => (
               <span style={`width:${w}%`}></span>
@@ -154,7 +157,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
       <div class="s tela">
         <div class="tela-barra"><i></i><i></i><i></i></div>
         <div class="tela-conteudo">
-          <MarcaProjeto {...mCurta} tamanho=".6rem" class="tela-marca" />
+          <MarcaProjeto {...mCurta} tamanho="3.2cqw" class="tela-marca" />
           <p class="tela-h">{frase}</p>
           <div class="tela-grade">{[0, 1, 2].map(() => <span></span>)}</div>
         </div>
@@ -181,7 +184,7 @@ const inicial = m.texto.trim()[0] ?? 'C';
       <div class="s assin">
         <div class="assin-esq"><span class="assin-inicial">{inicial}</span></div>
         <div class="assin-dir">
-          <MarcaProjeto {...mCurta} tamanho=".66rem" />
+          <MarcaProjeto {...mCurta} tamanho="5cqw" />
           <span class="assin-linha"></span>
           <span class="assin-dados">contato · telefone · site</span>
         </div>

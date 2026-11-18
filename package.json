@@ -10,7 +10,9 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "brand": "python3 tools/build-brand.py"
+    "brand": "python3 tools/build-brand.py",
+    "og": "node tools/build-og.mjs",
+    "a11y": "node tools/audit-a11y.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -18,5 +20,9 @@
     "lenis": "^1.1.18",
     "sharp": "^0.33.5",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.2",
+    "lightningcss": "^1.33.0"
   }
 }

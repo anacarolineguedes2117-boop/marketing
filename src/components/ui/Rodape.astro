@@ -20,7 +20,7 @@ const ano = new Date().getFullYear();
     <Wordmark class="rodape-marca" fragmento cor="var(--creme)" acento="var(--rosa)" />
 
     <div class="rodape-grade">
-      <nav class="rodape-col" aria-label="Capítulos">
+      <nav class="rodape-col" aria-label="Capítulos — rodapé">
         <p class="label">Capítulos</p>
         <ul>
           {capitulos.map((c) => (
@@ -29,7 +29,7 @@ const ano = new Date().getFullYear();
         </ul>
       </nav>
 
-      <nav class="rodape-col" aria-label="Páginas">
+      <nav class="rodape-col" aria-label="Páginas — rodapé">
         <p class="label">Páginas</p>
         <ul>
           <li><a href="/projetos">Projetos</a></li>
@@ -79,13 +79,14 @@ const ano = new Date().getFullYear();
   .rodape-voltar {
     --mx: 0px; --my: 0px;
     display: inline-flex; align-items: center; gap: .8rem;
+    padding-block: .4rem;
     text-decoration: none; font-family: var(--mono);
     font-size: var(--t-label); text-transform: uppercase;
     letter-spacing: var(--track-label);
     translate: var(--mx) var(--my);
     transition: translate .3s var(--ease);
   }
-  .rodape-topo .label { color: color-mix(in oklab, var(--creme) 46%, var(--preto)); }
+  .rodape-topo .label { color: var(--tinta-3); }
 
   .rodape-marca { width: 100%; margin-bottom: clamp(2.5rem, 6vh, 4.5rem); }
 
@@ -95,18 +96,19 @@ const ano = new Date().getFullYear();
     padding-block: clamp(2rem, 5vh, 3rem);
     border-top: 1px solid color-mix(in oklab, var(--creme) 16%, transparent);
   }
-  .rodape-col .label { margin-bottom: 1.1rem; color: color-mix(in oklab, var(--creme) 42%, var(--preto)); }
-  .rodape-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .48rem; }
+  .rodape-col .label { margin-bottom: 1.1rem; color: var(--tinta-3); }
+  .rodape-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; }
   .rodape-col a {
     text-decoration: none; font-size: var(--t-peq);
-    color: color-mix(in oklab, var(--creme) 82%, var(--preto));
+    display: inline-block; padding-block: .3rem;
+    color: var(--tinta-2);
     transition: color .3s var(--ease);
   }
   .rodape-col a:hover, .rodape-col a:focus-visible { color: var(--rosa); }
   .rodape-det { opacity: .5; }
   .rodape-pendente {
     font-size: var(--t-peq);
-    color: color-mix(in oklab, var(--creme) 52%, var(--preto));
+    color: var(--tinta-3);
     line-height: 1.7;
   }
   .rodape-pendente code {
@@ -121,6 +123,6 @@ const ano = new Date().getFullYear();
     border-top: 1px solid color-mix(in oklab, var(--creme) 16%, transparent);
     font-family: var(--mono); font-size: var(--t-label);
     text-transform: uppercase; letter-spacing: var(--track-label);
-    color: color-mix(in oklab, var(--creme) 42%, var(--preto));
+    color: var(--tinta-3);
   }
 </style>

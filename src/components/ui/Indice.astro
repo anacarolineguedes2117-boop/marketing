@@ -4,8 +4,20 @@
  * Em telas pequenas vira uma faixa fina no topo.
  */
 import { capitulos } from '~/data/capitulos';
+
+/* A barra e fixa sobre capitulos de fundos diferentes. Em vez de recorrer a
+   mix-blend-mode — que produz contraste real mas e invisivel para auditoria
+   e falha em alguns navegadores — a cor e trocada conforme o capitulo em
+   foco, usando o atributo que motion.ts escreve no <html>. */
+const escuros = capitulos
+  .filter((c) => c.tema === 'escuro' || c.tema === 'vinho')
+  .map((c) => `html[data-capitulo-atual="${c.id}"] .indice`)
+  .join(',\n');
+const regraTema = `${escuros} { --ind: var(--creme); --ind-fraco: rgb(255 255 255 / .34); }`;
 ---
-<nav class="indice" aria-label="Capítulos">
+
+<style is:global set:html={regraTema}></style>
+<nav class="indice" aria-label="Progresso dos capítulos">
   <span class="indice-barra" data-progresso><span class="indice-fita"></span></span>
   <ol class="indice-lista">
     {capitulos.map((c) => (
@@ -24,25 +36,28 @@ import { capitulos } from '~/data/capitulos';
     right: clamp(.9rem, 2vw, 1.9rem);
     top: 50%; translate: 0 -50%;
     display: flex; align-items: center; gap: .9rem;
-    mix-blend-mode: difference;
-    color: #fff;
+    --ind: var(--preto);
+    --ind-fraco: rgb(36 36 36 / .22);
+    color: var(--ind);
+    transition: color .6s var(--ease);
   }
   .indice-barra {
     --p: 0;
     width: 1px; height: clamp(8rem, 22vh, 15rem);
-    background: rgb(255 255 255 / .28); position: relative; order: 2;
+    background: var(--ind-fraco); position: relative; order: 2;
   }
   .indice-fita {
     position: absolute; inset-inline: -.5px; top: 0;
-    height: calc(var(--p) * 100%); background: #fff;
+    height: calc(var(--p) * 100%); background: var(--ind);
     transition: height .12s linear;
   }
-  .indice-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: .52rem; order: 1; text-align: right; }
+  .indice-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; order: 1; text-align: right; }
   .indice-link {
     display: flex; align-items: baseline; justify-content: flex-end; gap: .55rem;
     text-decoration: none; font-family: var(--mono); font-size: .62rem;
     letter-spacing: .14em; text-transform: uppercase;
-    opacity: .42; transition: opacity .3s var(--ease);
+    padding-block: .3rem;
+    opacity: .72; transition: opacity .3s var(--ease);
   }
   .indice-link:hover, .indice-link:focus-visible { opacity: 1; }
   .indice-link[data-ativo] { opacity: 1; }
@@ -60,7 +75,7 @@ import { capitulos } from '~/data/capitulos';
   .indice-n { font-variant-numeric: tabular-nums; }
 
   @media (max-width: 64rem) {
-    .indice { top: 0; right: 0; left: 0; translate: 0; height: 2px; mix-blend-mode: normal; }
+    .indice { top: 0; right: 0; left: 0; translate: 0; height: 2px; }
     .indice-lista { display: none; }
     .indice-barra {
       width: 100%; height: 2px; background: color-mix(in oklab, var(--tinta) 12%, transparent);

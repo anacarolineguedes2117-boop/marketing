@@ -84,8 +84,12 @@ const ogAbs = new URL(imagem, site.url).href;
 </head>
 
 <body class={classe}>
-  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-  {!nu && <Cabecalho compacto={compacto} />}
+  {!nu && (
+    <>
+      <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+      <Cabecalho compacto={compacto} />
+    </>
+  )}
   <main id="conteudo">
     <slot />
   </main>

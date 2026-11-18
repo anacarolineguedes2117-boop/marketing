@@ -63,7 +63,7 @@ import { site } from '~/data/site';
     border-bottom: 1px solid var(--linha);
     animation: entra .8s var(--ease) .1s both;
   }
-  .abertura-ano { color: var(--marca); }
+  .abertura-ano { color: var(--acento); }
 
   .abertura-marca { width: 100%; }
   .abertura-wordmark { width: 100%; }
@@ -89,6 +89,7 @@ import { site } from '~/data/site';
   .abertura-rolar {
     display: inline-flex; align-items: center; gap: .9rem;
     text-decoration: none; align-self: start; margin-top: clamp(.5rem, 2vh, 1.5rem);
+    padding-block: .55rem;   /* área de toque confortável */
     animation: entra .9s var(--ease) 1.4s both;
   }
   .abertura-trilho {
@@ -120,6 +121,32 @@ import { site } from '~/data/site';
   @media (max-width: 48rem) {
     .abertura :global(.ad--3), .abertura :global(.ad--4) { display: none; }
     .abertura :global(.ad--2) { bottom: 22%; right: 4%; }
+  }
+
+  /* --- composição específica para telas pequenas -------------------------
+     No celular a tela é alta e estreita: em vez de centralizar tudo e deixar
+     vazios nas pontas, o conteúdo se distribui de topo a base e a frase
+     ganha peso de manchete. */
+  @media (max-width: 48rem) {
+    .abertura { padding-block: 4.2rem 0; }
+    .abertura-env {
+      justify-content: space-between;
+      gap: clamp(1.2rem, 3vh, 2rem);
+      padding-block: .5rem 1.2rem;
+    }
+    .abertura-cabeca {
+      flex-direction: column; align-items: flex-start; gap: .3rem;
+      padding-bottom: .9rem;
+    }
+    .abertura-marca { margin-block: auto; }
+    .abertura-frase {
+      font-size: clamp(1.6rem, 7.4vw, 2.3rem); line-height: 1.16;
+      max-width: none; font-variation-settings: 'opsz' 90, 'SOFT' 15, 'WONK' 0;
+    }
+    .abertura-corpo { gap: .9rem; }
+    .abertura-assinatura { font-size: .62rem; }
+    .abertura-rolar { margin-top: 0; }
+    .abertura-faixa { font-size: clamp(.95rem, 4.2vw, 1.2rem); padding-block: .85rem; }
   }
 
   @keyframes entra { from { opacity: 0; translate: 0 1rem; } to { opacity: 1; translate: 0 0; } }
